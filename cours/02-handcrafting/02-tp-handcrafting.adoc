@@ -81,8 +81,8 @@ Initialiser un fichier pom.xml à la racine du projet
     <packaging>war</packaging> <!--1-->
 
     <properties>
-        <maven.compiler.source>11</maven.compiler.source> <!--2-->
-        <maven.compiler.target>11</maven.compiler.target> <!--3-->
+        <maven.compiler.source>17</maven.compiler.source> <!--2-->
+        <maven.compiler.target>17</maven.compiler.target> <!--3-->
     </properties>
 
     <dependencies>
@@ -187,6 +187,8 @@ Ecrire un fichier web.xml pour déclarer la servlet:
 Nous avons besoin de Tomcat pour exécuter notre Servlet !
 
 Télécharger tomcat depuis la page officielle : link:https://tomcat.apache.org/download-90.cgi[,window="_blank"]
+
+NOTE: Prenez bien la 'Binary Distribution', si vous prenez la source vous devrez compiler Tomcat vous-même ! Sous Linux, privilégiez le format `.tar.gz`, qui conserve les bons droits sur les fichiers.
 
 Récupérer le zip ou le tar.gz.
 
