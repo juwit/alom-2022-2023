@@ -26,7 +26,7 @@ $ echo $JAVA_HOME
 /opt/jdk-17.0.4.1+1
 ----
 
-=== Configuration de Java 16 sur les postes de l'université
+=== Configuration de Java 17 sur les postes de l'université
 
 [NOTE]
 ====
@@ -72,12 +72,10 @@ OS name: "linux", version: "5.18.10-76051810-generic", arch: "amd64", family: "u
 ====
 Si Maven n'est pas installé, suivre la procédure sur http://maven.apache.org/download.cgi et http://maven.apache.org/install.html
 
-1. Télécharger maven
+1. Télécharger maven (prenez bien le 'Binary Archive')
 2. extraire le zip ou le tar.gz
 3. Ajouter le répertoire `bin` au `PATH`
 ====
-
-
 
 === Configuration du localRepository
 
