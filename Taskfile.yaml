@@ -1,0 +1,24 @@
+version: '3'
+
+vars:
+  GREETING: Hello, World!
+
+tasks:
+  default:
+    cmds:
+      - task: generate-tps
+      - task: update-index-footer
+
+  generate-tps:
+    cmds:
+      - asciidoctor **/*.adoc
+    sources:
+      - cours/**/*.adoc
+    silent: true
+
+  update-index-footer:
+    vars:
+      DATE:
+        sh: date '+%a. %d %b. %Y' | tr '[:upper:]' '[:lower:]'
+    cmds:
+      - sed -i 's|<div id="footer-text">.*|<div id="footer-text"> Last updated {{.DATE}}</div>|' index.html
