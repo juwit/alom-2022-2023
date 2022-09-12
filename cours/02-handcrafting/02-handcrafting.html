@@ -33,6 +33,7 @@
 				<section>
 					<h1>ALOM</h1>
 					<h2>🛠️ Handcrafting everything</h2>
+                    <h3>Threads, Sockets & Servlets </h3>
 				</section>
 
 				<section>
@@ -70,6 +71,114 @@
                     <h2>Zoom sur un micro-service Java</h2>
                     <p>On s'appuie sur les technologies connues: les servlets !</p>
                     <img src="images/architecture.svg"/>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                    ## Threads
+                    </section>
+                    <section data-markdown>
+                    ### Le système d'exploitation
+                    ![](threads/Operating_system_placement.svg.png)
+                    </section>
+                    <section data-markdown>
+                    ### Une application mono-threadée
+                    ![](threads/app-mono-thread.png)
+                    </section>
+                    <section data-markdown>
+                    ### Une application multi-threadée
+                    ![](threads/app-multi-thread.png)
+                    </section>
+                    <section data-markdown>
+                    ### Les Threads en Java
+                    ```java
+                    public void run() {
+                        System.out.println("I am Thread A");
+                    }
+                    ```
+                    ```java
+                    public void run() {
+                        System.out.println("I am Thread B");
+                    }
+                    ```
+                    </section>
+                    <section data-markdown>
+                    ### Les threads sont indépendants et ordonnancés
+                    ![](threads/app-threads-ordonnanceur.png)
+
+                    ```text
+                    > I am Thread A
+                    > I am Thread B
+                    ```
+                    ```text
+                    > I am Thread B
+                    > I am Thread A
+                    ```
+                    </section>
+                    <section data-markdown>
+### Création d'un thread
+
+* Deux possibilités pour créer une classe exécutée par un thread :
+  * Création d’une classe implémentant l’interface Runnable
+  * Création d’une classe héritant de la classe abstraite Thread
+* Dans les deux cas, il faut implémenter la méthode `public void run()`
+                    </section>
+                    <section data-markdown>
+### Instanciation et démarrage
+* Pour instancier une classe implémentant Runnable :
+  * `Thread t = new Thread(new MaClasse());`
+* Pour instancier une classe héritant de la classe Thread :
+  * `Thread t = new MaClasse();`
+* Pour démarrer le Thread t lorsqu’il a été instancié :
+  * `t.start();`
+                    </section>
+                    <section data-markdown>
+### Cycle de vie d'un thread
+* Lorsqu’un thread démarre, c’est la méthode `run()` qui est exécutée
+* Le thread est « vivant » (alive) aussi longtemps qu’il n’a pas terminé d’exécuter la méthode `run()`
+* La seule manière « propre et naturelle » de terminer un thread est de faire en sorte que le thread termine l’exécution de la méthode `run()`
+                    </section>
+                    <section data-markdown>
+### Cycle de vie d'un thread
+* Interdiction d’utiliser les méthodes suivantes pour arrêter un thread (deprecated) :
+  * `stop()`
+  * `suspend()`
+* A utiliser pour arrêter un thread:
+  * `interrupt()`: Peut causer des `InterruptedException` si le thread était en attente (`Thread.sleep`, ou `Object.wait()`)
+                    </section>
+                    <section data-markdown>
+### Développer des threads *infinis*
+```java
+public void run(){
+    while(true) {
+        // Non !
+        // Impossible à arrêter proprement !
+    }
+}
+```
+                    </section>
+                    <section data-markdown>
+### Développer des threads *infinis*
+```java [|2|5|8-10]
+public class FinishableThread extends Thread {
+    private boolean running = false;
+    public void run(){
+        this.running = true;
+        while(this.running) {
+        }
+    }
+    public void finish(){
+        this.running = false;
+    }
+}
+```
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                    ## Sockets
+                    </section>
                 </section>
 
 				<section>
