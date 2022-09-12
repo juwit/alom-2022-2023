@@ -177,7 +177,57 @@ public class FinishableThread extends Thread {
 
                 <section>
                     <section data-markdown>
-                    ## Sockets
+                        ## Sockets et connexions
+                    </section>
+                    <section data-markdown>
+                        ### Communications Ip
+                        ![](sockets/communication-ip.png)
+                    </section>
+                    <section data-markdown>
+                        ### Sockets côté client
+                        Pour créer une connexion vers un serveur, il faut :
+                        * Créer une socket côté client
+                        * Renseigner l’adresse IP du serveur
+                        * Renseigner le port d’écoute du serveur
+
+                        Exemple :
+                        ```java
+                        Socket s = new Socket("5.6.7.8",12345);
+                        // s.getInputStream() to read data
+                        // s.getOuputStream() to send data
+                        ```
+                    </section>
+                    <section>
+                        <h3>L'établissement d'une connexion</h3>
+                        <div class="r-stack">
+                            <img class="fragment" src="sockets/connexion-1.png"/>
+                            <img class="fragment" src="sockets/connexion-2.png"/>
+                            <img class="fragment" src="sockets/connexion-3.png"/>
+                        </div>
+                    </section>
+                    <section data-markdown>
+                        ### Sockets côté serveur
+                        Pour accepter des connexions côté serveur, il faut :
+                        * Créer une  socket  serveur côté serveur
+                        * Renseigner le port d’écoute souhaité
+                        * Lancer l’écoute
+
+                        Exemple :
+                        ```java
+                            ServerSocket ss = new ServerSocket(12345);
+                            Socket s = ss.accept();
+                            // s.getInputStream() to read data
+                            // s.getOuputStream() to send data
+                        ```
+                    </section>
+                    <section>
+                        <h3>Sockets & Threads</h3>
+                        <p>Exécuter une boucle de `accept()` dans un Thread, et les associer un Thread à chaque `Socket` acceptée</p>
+                        <div class="r-stack">
+                            <img class="fragment" src="sockets/socket-threads-1.png"/>
+                            <img class="fragment" src="sockets/socket-threads-2.png"/>
+                            <img class="fragment" src="sockets/socket-threads-3.png"/>
+                        </div>
                     </section>
                 </section>
 
