@@ -33,7 +33,7 @@
 				<section>
 					<h1>ALOM</h1>
 					<h2>🛠️ Handcrafting everything</h2>
-                    <h3>Threads, Sockets & Servlets </h3>
+                    <h3>Threads, Sockets & Servlets 💙</h3>
 				</section>
 
 				<section>
@@ -68,9 +68,18 @@
                 </section>
 
                 <section>
-                    <h2>Zoom sur un micro-service Java</h2>
-                    <p>On s'appuie sur les technologies connues: les servlets !</p>
-                    <img src="images/architecture.svg"/>
+                    <section>
+                        <h2>Zoom sur un micro-service Java</h2>
+                        <p>On s'appuie sur les technologies connues: les servlets !</p>
+                        <img src="images/architecture.svg"/>
+                    </section>
+                    <section data-markdown>
+                    ## Comment fonctionne une servlet ?
+
+                    * Utilise des Sockets pour les communication réseau
+                    * Utilise des Threads pour exécuter chaque Socket indépendamment
+                    * Parse les requêtes HTTP (du texte) pour en faire des objets Java
+                    </section>
                 </section>
 
                 <section>
@@ -248,7 +257,8 @@ public class FinishableThread extends Thread {
                 </section>
 
                 <section>
-                    <h2><a href="02-tp-handcrafting.html"><i class="em em-link"></i> TP !</a></h2>
+                    <h2><a href="02-tp-handcrafting-webserver.html"><i class="em em-link"></i> TP Threads et Sockets</a></h2>
+                    <h2><a href="02-tp-handcrafting.html"><i class="em em-link"></i> TP Servlets</a></h2>
                     <img src="../images/leonidas.png"/>
                 </section>
 
