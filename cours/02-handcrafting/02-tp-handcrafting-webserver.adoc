@@ -123,11 +123,11 @@ Puis modifiez ces deux classes afin que :
   * La classe App ne boucle plus tant que h1 et h2 sont alive, mais attendent simplement 100 ms puis arrête h1 et h2
   * La classe Helloworld utilise une boucle infinie au démarrage du thread, jusqu'à ce qu'elle soit arrêtée proprement (par un appel extérieur de méthode influant sur la boucle par exemple ? cf cours ...)
 
-Lorsque vous aurez terminé la partie ci-dessus (manipulation des threads et de la classe HelloWorld), vous pouvez passer au travail à rendre.
+Lorsque vous aurez terminé la partie ci-dessus (manipulation des threads et de la classe HelloWorld), vous pouvez passer à la suite.
 
-== Travail à rendre
+== Threads & Sockets
 
-Pour commencer, nous allons recréer un projet java simple avec les paramètres suivants :
+Pour (re)commencer, nous allons recréer un projet java simple avec les paramètres suivants :
 
 * groupId : com.miage.alom.tp
 * artificatId : java-webserver
