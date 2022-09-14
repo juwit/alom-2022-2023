@@ -80,7 +80,7 @@ public class Helloworld extends Thread {
   public void run() {
     for(int i=0;i<NB_BOUCLE;i++) {
       this.logs.put((System.nanoTime()-startTime),"Thread["+name+"] count : ["+i+"]");
-      if(random.nextInt(100) &lt; 10) {
+      if(random.nextInt(100) < 10) {
         this.logs.put((System.nanoTime()-startTime),"Thread["+name+"] yield");
         yield();
       }
