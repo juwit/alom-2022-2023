@@ -1,0 +1,152 @@
+:source-highlighter: pygments
+:icons: font
+
+:toc: left
+:toclevels: 4
+
+:sectlinks:
+:sectanchors:
+:sectnums:
+
+= ALOM - TP - Modern Java
+
+Dans ce TP, nous allons un peu jouer avec les nouveautés du langaga Java:
+
+* records
+* streams & lambdas
+* multi-line strings
+
+NOTE: Nous avons bien besoin de Java 17 pour ce TP !
+
+== Initialisation du projet
+
+Initialisez un projet Maven avec un `pom.xml`:
+
+[source,xml,linenums]
+----
+<project>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.miage.alom.tp</groupId>
+    <artifactId>modern-java</artifactId>
+    <version>0.1.0</version>
+    <packaging>jar</packaging>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source> <!--1-->
+        <maven.compiler.target>17</maven.compiler.target> <!--2-->
+    </properties>
+
+    <dependencies>
+    </dependencies>
+
+</project>
+----
+<1> On indique à maven quelle version de Java utiliser pour les sources !
+<2> On indique à maven quelle version de JVM on cible !
+
+NOTE: Maven considère par défaut que le code est écrit en Java 7 !
+
+Ajoutez les dépendances JUnit:
+
+.pom.xml
+[source,xml,linenums]
+----
+<dependency>
+    <groupId>org.junit.jupiter</groupId>
+    <artifactId>junit-jupiter-api</artifactId>
+    <version>5.9.0</version>
+    <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>org.junit.jupiter</groupId>
+    <artifactId>junit-jupiter-engine</artifactId>
+    <version>5.9.0</version>
+    <scope>test</scope>
+</dependency>
+----
+
+Il vous faut également surcharger la version du `maven-surefire-plugin`
+(qui est le plugin maven qui implémente la phase d'exécution des tests).
+
+.pom.xml
+[source,xml,linenums]
+----
+<pluginManagement>
+    <plugins>
+        <plugin>
+            <artifactId>maven-war-plugin</artifactId>
+            <version>3.2.2</version>
+        </plugin>
+        <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>2.22.1</version> <!--1-->
+        </plugin>
+    </plugins>
+</pluginManagement>
+----
+<1> On a besoin de la version 2.22.0 minimum pour JUnit 5 comme indiqué
+https://junit.org/junit5/docs/current/user-guide/#running-tests-build-maven[dans la documentation junit, window="_blank"]
+
+== Records
+
+Dans un premier temps, nous allons manipuler des records.
+
+Créez les records suivant:
+
+* PokemonType
+** id: int
+** name: String
+** types: List<String>
+
+* Pokemon
+** type: PokemonType
+** nickname: name
+** level: int
+
+Le record `PokemonType` représente les types de Pokemon (Pikachu, Rattata, ...).
+
+Le record `Pokemon` représente un Pokemon particulier (Le Pikachu de Sasha, le Rattata de Julien...).
+
+Importez dans votre code les tests unitaires suivants:
+
+[source,java,linenums]
+----
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+public class RecordsTest {
+
+    @Test
+    public void testPokemonTypeCreation(){
+        var pikachu = new PokemonType(25, "Pikachu", List.of("electric"));
+
+        assertThat(pikachu.id()).isEqualTo(25);
+        assertThat(pikachu.name()).isEqualTo("Pikachu");
+        assertThat(pikachu.types()).containsOnly("electric");
+    }
+
+    @Test
+    public void testPokemonCreation(){
+        var geodude = new PokemonType(74, "Racaillou", List.of("rock", "ground"));
+        var petersGeodude = new Pokemon(geodude, "Racaillou de Pierre", 12);
+
+        assertThat(petersGeodude.nickname()).isEqualTo("Racaillou de Pierre");
+        assertThat(petersGeodude.type()).isEqualTo(geodude);
+        assertThat(petersGeodude.level()).isEqualTo(12);
+    }
+
+}
+----
+
+== Multi-Line Strings
+
+== Streams et Lambdas
+
+Nous allons maintenant charger une liste de types de Pokemons, et la manipuler avec des Streams.
+
+Récupérez le fichier link:pokemons.json[, role="external", window="_blank"], et placez-le dans le répertoire `src/main/resources` de votre projet.
+
+L
