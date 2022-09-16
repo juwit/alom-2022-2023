@@ -139,12 +139,12 @@ Permet d'implémenter des classes anonymes simplement.
 
 Ex, avec l'instanciation d'un Runnable
 ```java 
-	Runnable runnable = new Runnable(){
-		@Override
-		public void run(){
-			System.out.println("Hello world !");
-		}
-		};
+Runnable runnable = new Runnable(){
+	@Override
+	public void run(){
+		System.out.println("Hello world !");
+	}
+};
 ```
 Avec une lambda:
 ```java
@@ -163,36 +163,52 @@ interface ne contenant qu'une seule méthode abstraite.
 * `Runnable` définit la méthode `run()`
 * `Consumer<T>` définit la méthode `accept(T t)`
 * et beaucoup d'autres dans le JDK
-Une lambda peut être utilisée partout où une interface fonctionnelle est demandée.
 
+Une lambda peut être utilisée partout où une interface fonctionnelle est demandée.
 						</textarea>
 					</section>
 					<section data-markdown>
 						<textarea data-template>
 Exemple avec `Collections.sort`:
 ```java
-List<Human> humans = Arrays.asList(
-		new Human("Sarah", 10), 
-		new Human("Jack", 12)
-	);
+List<Pokemon> pokemons = Arrays.asList(
+	new Pokemon("Pikachu", 25), 
+	new Pokemon("Bulbizarre", 1)
+);
 	
-Collections.sort(humans, new Comparator<Human>() {
+Collections.sort(pokemons, new Comparator<Pokemon>() {
 	@Override
-	public int compare(Human h1, Human h2) {
-		return h1.getName().compareTo(h2.getName());
+	public int compare(Pokemon p1, Pokemon p2) {
+		return p1.getName().compareTo(p2.getName());
 	}
 });
 ```
 Exemple avec une lambda:
 ```java
-List<Human> humans = Arrays.asList(
-		new Human("Sarah", 10), 
-		new Human("Jack", 12)
-	);
+List<Pokemon> pokemons = Arrays.asList(
+	new Pokemon("Pikachu", 25), 
+	new Pokemon("Bulbizarre", 1)
+);
 	
-Collections.sort(humans, (h1, h2) -> h1.getName().compareTo(h2.getName()));
+Collections.sort(pokemons, (p1, p2) -> p1.getName().compareTo(p2.getName()));
 ```
+						</textarea>
+					</section>
+					<section data-markdown>
+						<textarea data-template>
+Instanciation de Lambdas
+```java
+Runnable monTraitement = () -> System.out.println("traitement");
 
+Consumer<String> afficher = param -> System.out.println(param);
+
+Comparator<Pokemon> comp = 
+	(Pokemon p1, Pokemon p2) -> p1.getName().compareTo(p2.getName();
+
+Function<Integer, Boolean> isPositive = it -> it > 0;
+
+Supplier<Integer> fortyTwo = () -> 42;
+```
 						</textarea>
 					</section>
 					<section data-markdown>
@@ -217,11 +233,98 @@ Syntaxe d'une lambda:
 					</section>
 					<section data-markdown>
 						<textarea data-template>
-
 ### method references
-### Collections et streams
-### static methods in interfaces
+
+Les références de méthodes permettent d'invoquer une méthode existante comme une lambda:
+
+* une méthode statique
+* une méthode d'instance
+* un constructeur
+
+Syntaxe:
+
+`nomClasse::nomMethode`
+ou
+`objet::nomMethode`
+						</textarea>
+					</section>
+					<section data-markdown>
+						<textarea data-template>
+							### method references
+							| référence de méthode | lambda |
+							| -------------------- | ------ |
+							| `System.out::println` | `x -> System.out.println(x)` |
+							| `Math::pow` | `(x,y) -> Math.pow(x,y)` |
+							| `pokemon::attack` | `x -> x -> pokemon.attack(x)` |
+							| `Pokemon::new` | `(x,y) -> new Pokemon(x,y)` |
+							
+							Le compilateur décide quelle implémentation appeler en fonction de l'interface fonctionnelle demandée
+						</textarea>
+					</section>
+					<section data-markdown>
+						<textarea data-template>
+							### Collections et streams
+							Les streams facilitent les traitement de données sur les collections.
+							* boucles sur les collections
+							* approche fonctionnelle
+							  * utilisation de Lambdas				
+						</textarea>
+					</section>
+					<section data-markdown>
+						<textarea data-template>
+							### Collections et streams
+							Opérations sur les streams:
+							* filter : filtre du stream
+							* map : transformation
+							* find : recheche
+							* sorted : tri
+							* match : correspondance avec un prédicat
+						</textarea>
+					</section>
+					<section data-markdown>
+						<textarea data-template>
+							### Collections et streams
+							Réductions:
+							* count
+							* limit
+							* min / max
+							* reduce
+
+							Consommation:
+							* forEach
+							* toArray / toList
+							* collect
+						</textarea>
+					</section>
+					<section data-markdown>
+						<textarea data-template>
+							### Collections et streams
+							```java
+							int countElectricLegendaries = pokemons.stream()
+									.filter(p -> p.getType().equals("electric"))
+									.filter(p -> p.isLegendary())
+									.count(); // 1
+							```
+
+							```java
+							Set<String> legendaryTypes = pokemons.stream()
+									.filter(Pokemon::isLegendary)
+									.map(Pokemon::getType)
+									.map(String::toUpperCase)
+									.collect(Collectors.toSet()); // ELECTRIC, ICE, FIRE, PSY
+							```
+						</textarea>
+					</section>
+					<section data-markdown>
+						<textarea data-template>
 ### default methods in interfaces
+```java
+public interface PokemonPrinter{
+	default void print(Pokemon p){
+		System.out.println("Pokemon name: " + p.getName());
+	}
+}
+```
 						</textarea>
 					</section>
 					<section data-markdown>
@@ -238,7 +341,10 @@ Optional.empty();
 // pour créer un optional contenant une valeur
 Optional.of("Some Value here"); 
 ```
-
+						</textarea>
+					</section>
+					<section data-markdown>
+						<textarea data-template>
 Manipulation:
 
 ```java
@@ -452,7 +558,22 @@ Un record peut être défini à la racine d'un fichier Java, ou comme une classe
 					</section>
 					<section data-markdown>
 						<textarea data-template>
-							#### Pattern matching instanceof
+							### Pattern matching instanceof
+							évite de devoir caster un objet checké avec `instanceof`
+							```java
+							if (animal instanceof Cat) {
+								((Cat)animal).meow();
+							} else if(animal instanceof Dog) {
+								((Dog)animal).woof();
+							}
+							```
+							```java
+							if (animal instanceof Cat cat) {
+								cat.meow();
+							} else if(animal instanceof Dog dog) {
+								dog.woof();
+							}
+							```
 						</textarea>
 					</section>
 				</section>
