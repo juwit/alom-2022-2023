@@ -141,12 +141,166 @@ public class RecordsTest {
 }
 ----
 
-== Multi-Line Strings
-
 == Streams et Lambdas
 
 Nous allons maintenant charger une liste de types de Pokemons, et la manipuler avec des Streams.
 
 Récupérez le fichier link:pokemons.json[, role="external", window="_blank"], et placez-le dans le répertoire `src/main/resources` de votre projet.
 
-L
+Pour charger le fichier JSON, nous allons devoir utiliser la librairie `jackson-databind`:
+
+.pom.xml
+[source,xml,linenums]
+----
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.13.2.1</version>
+</dependency>
+----
+
+Importez et complétez la classe suivante:
+
+[source,java,linenums]
+----
+public class PokemonStreams {
+
+    private Collection<PokemonType> pokemonsTypes;
+
+    public void loadPokemonTypes() throws IOException {
+        var objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        this.pokemonsTypes = objectMapper.readValue(new FileInputStream("src/main/resources/pokemons.json"), new TypeReference<Collection<PokemonType>>() {});
+    }
+
+    public List<PokemonType> sortById(){
+        // TODO
+    }
+
+    public Set<PokemonType> findByType(String type) {
+        // TODO
+    }
+
+    public Optional<PokemonType> findFirstByTypes(String... types) {
+        // TODO
+    }
+}
+----
+
+Vous pouvez valider vos développements avec la classe de test suivante :
+
+[source,java,linenums]
+----
+public class PokemonStreamsTest {
+
+    PokemonStreams pokemonStreams;
+
+    @BeforeEach
+    void setUp() throws IOException {
+        pokemonStreams = new PokemonStreams();
+        pokemonStreams.loadPokemonTypes();
+    }
+
+    @Test
+    public void testSortById(){
+        assertThat(pokemonStreams.sortById())
+                .extracting(it -> it.id())
+                .isSorted();
+    }
+
+    @Test
+    public void testFindElectricPokemons(){
+        assertThat(pokemonStreams.findByType("electric"))
+                .hasSize(9);
+    }
+
+    @Test
+    public void testFindFirePokemons(){
+        assertThat(pokemonStreams.findByType("fire"))
+                .hasSize(12);
+    }
+
+    @Test
+    public void testFindFirstPsychicPokemon(){
+        assertThat(pokemonStreams.findFirstByTypes("psychic"))
+                .isNotEmpty()
+                .get()
+                .extracting("name")
+                .isEqualTo("abra");
+    }
+
+    @Test
+    public void testFindFirstUnknownPokemon(){
+        assertThat(pokemonStreams.findFirstByTypes("unknown"))
+                .isEmpty();
+    }
+}
+----
+
+La méthode `assertThat` provient de l'import `import static org.assertj.core.api.Assertions.assertThat;`
+
+Vous aurez besoin de la librairie `assertj` dans votre classpath de test:
+
+.pom.xml
+[source,xml,linenums]
+----
+<dependency>
+    <groupId>org.assertj</groupId>
+    <artifactId>assertj-core</artifactId>
+    <version>3.23.1</version>
+    <scope>test</scope>
+</dependency>
+----
+
+== Multi-Line Strings
+
+Importez le test suivant, et faites ce qu'il faut pour qu'il passe !
+
+[source,java,linenums]
+----
+public class TextBlockTest {
+
+    ObjectMapper objectMapper;
+
+    @BeforeEach
+    void setUp() {
+        objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
+
+    @Test
+    void pokemonAsJsonString() throws JsonProcessingException {
+        var jsonStringOldFashioned = "{\n" +
+                "    \"id\": 47,\n" +
+                "    \"name\": \"parasect\",\n" +
+                "    \"baseExperience\": 142,\n" +
+                "    \"weight\": 295,\n" +
+                "    \"height\": 10,\n" +
+                "    \"types\": [\n" +
+                "      \"grass\",\n" +
+                "      \"bug\"\n" +
+                "    ],\n" +
+                "    \"stats\": {\n" +
+                "      \"speed\": 30,\n" +
+                "      \"attack\": 95,\n" +
+                "      \"defense\": 80,\n" +
+                "      \"hp\": 60\n" +
+                "    },\n" +
+                "    \"sprites\": {\n" +
+                "      \"front_default\": \"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/47.png\",\n" +
+                "      \"back_default\": \"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/47.png\"\n" +
+                "    }\n" +
+                "  }";
+        var pokemonTypeFromJsonString = objectMapper.readValue(jsonStringOldFashioned, PokemonType.class);
+        System.out.println("pokemonType.toString() = " + pokemonTypeFromJsonString.toString());
+
+
+        // TODO : écrivez un text block ici !
+        String textBlockString = null;
+        var pokemonTypeFromTextBlock = objectMapper.readValue(textBlockString, PokemonType.class);
+
+        assertThat(pokemonTypeFromJsonString).isEqualTo(pokemonTypeFromTextBlock);
+    }
+}
+----
