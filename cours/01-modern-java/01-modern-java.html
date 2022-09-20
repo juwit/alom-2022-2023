@@ -121,8 +121,7 @@ try( FileOutputStream fos = new FileOutputStream("text.txt") ){
 	fos.write("Hello".getBytes());
 }
 catch(Exception e){
-	// kids, don't do that at home !
-	e.printStackTrace();
+	// do something with those exceptions
 }
 ```
 						</textarea>
@@ -362,7 +361,25 @@ res.ifPresent(value -> {
 Optional<String> res = someMethod();
 return res.orElseThrow(new RuntimeException("Pas de valeur !"));
 ```
-					</textarea>
+						</textarea>
+					</section>
+					<section data-markdown>
+						<textarea data-template>
+### Api Date/Time
+
+Depuis Java 1.0 (📅 jan 1996): `java.util.Date`
+
+* Contient une date *et* une heure, sur le fuseau horaire de la machine
+
+Depuis Java 8 (📅 mar 2014)
+
+* package `java.time`
+  * `LocalDate` : Date sans heure ni fuseau
+  * `LocalDateTime` : Date avec heure sans fuseau
+  * `ZonedDateTime` : Date avec heure et fuseau
+  * `Period` : Période de temps sans date (ex: 1 heure, 2 jours...)
+
+						</textarea>
 					</section>
                 </section>
 				<section data-markdown>
