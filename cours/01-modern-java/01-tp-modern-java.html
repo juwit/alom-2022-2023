@@ -516,8 +516,8 @@ pre.pygments .tok-il { color: #666666 } /* Literal.Number.Integer.Long */
 <ul class="sectlevel1">
 <li><a href="#_initialisation_du_projet">1. Initialisation du projet</a></li>
 <li><a href="#_records">2. Records</a></li>
-<li><a href="#_multi_line_strings">3. Multi-Line Strings</a></li>
-<li><a href="#_streams_et_lambdas">4. Streams et Lambdas</a></li>
+<li><a href="#_streams_et_lambdas">3. Streams et Lambdas</a></li>
+<li><a href="#_multi_line_strings">4. Multi-Line Strings</a></li>
 </ul>
 </div>
 </div>
@@ -813,26 +813,309 @@ Maven considère par défaut que le code est écrit en Java 7 !
 </div>
 </div>
 <div class="sect1">
-<h2 id="_multi_line_strings"><a class="anchor" href="#_multi_line_strings"></a><a class="link" href="#_multi_line_strings">3. Multi-Line Strings</a></h2>
-<div class="sectionbody">
-
-</div>
-</div>
-<div class="sect1">
-<h2 id="_streams_et_lambdas"><a class="anchor" href="#_streams_et_lambdas"></a><a class="link" href="#_streams_et_lambdas">4. Streams et Lambdas</a></h2>
+<h2 id="_streams_et_lambdas"><a class="anchor" href="#_streams_et_lambdas"></a><a class="link" href="#_streams_et_lambdas">3. Streams et Lambdas</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Nous allons maintenant charger une liste de types de Pokemons, et la manipuler avec des Streams.</p>
 </div>
 <div class="paragraph">
-<p>Récupérez le fichier <a href="pokemons.json" class="bare external" target="_blank" rel="noopener">pokemons.json</a></p>
+<p>Récupérez le fichier <a href="pokemons.json" class="bare external" target="_blank" rel="noopener">pokemons.json</a>, et placez-le dans le répertoire <code>src/main/resources</code> de votre projet.</p>
+</div>
+<div class="paragraph">
+<p>Pour charger le fichier JSON, nous allons devoir utiliser la librairie <code>jackson-databind</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">pom.xml</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="xml"><table class="linenotable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span></pre></div></td><td class="code"><pre><span></span><span class="tok-nt">&lt;dependency&gt;</span>
+    <span class="tok-nt">&lt;groupId&gt;</span>com.fasterxml.jackson.core<span class="tok-nt">&lt;/groupId&gt;</span>
+    <span class="tok-nt">&lt;artifactId&gt;</span>jackson-databind<span class="tok-nt">&lt;/artifactId&gt;</span>
+    <span class="tok-nt">&lt;version&gt;</span>2.13.2.1<span class="tok-nt">&lt;/version&gt;</span>
+<span class="tok-nt">&lt;/dependency&gt;</span>
+</pre></td></tr></table></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Importez et complétez la classe suivante:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="java"><table class="linenotable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span></pre></div></td><td class="code"><pre><span></span><span class="tok-kd">public</span> <span class="tok-kd">class</span> <span class="tok-nc">PokemonStreams</span> <span class="tok-p">{</span>
+
+    <span class="tok-kd">private</span> <span class="tok-n">Collection</span><span class="tok-o">&lt;</span><span class="tok-n">PokemonType</span><span class="tok-o">&gt;</span> <span class="tok-n">pokemonsTypes</span><span class="tok-p">;</span>
+
+    <span class="tok-kd">public</span> <span class="tok-kt">void</span> <span class="tok-nf">loadPokemonTypes</span><span class="tok-p">()</span> <span class="tok-kd">throws</span> <span class="tok-n">IOException</span> <span class="tok-p">{</span>
+        <span class="tok-kd">var</span> <span class="tok-n">objectMapper</span> <span class="tok-o">=</span> <span class="tok-k">new</span> <span class="tok-n">ObjectMapper</span><span class="tok-p">();</span>
+        <span class="tok-n">objectMapper</span><span class="tok-p">.</span><span class="tok-na">configure</span><span class="tok-p">(</span><span class="tok-n">DeserializationFeature</span><span class="tok-p">.</span><span class="tok-na">FAIL_ON_UNKNOWN_PROPERTIES</span><span class="tok-p">,</span> <span class="tok-kc">false</span><span class="tok-p">);</span>
+
+        <span class="tok-k">this</span><span class="tok-p">.</span><span class="tok-na">pokemonsTypes</span> <span class="tok-o">=</span> <span class="tok-n">objectMapper</span><span class="tok-p">.</span><span class="tok-na">readValue</span><span class="tok-p">(</span><span class="tok-k">new</span> <span class="tok-n">FileInputStream</span><span class="tok-p">(</span><span class="tok-s">&quot;src/main/resources/pokemons.json&quot;</span><span class="tok-p">),</span> <span class="tok-k">new</span> <span class="tok-n">TypeReference</span><span class="tok-o">&lt;</span><span class="tok-n">Collection</span><span class="tok-o">&lt;</span><span class="tok-n">PokemonType</span><span class="tok-o">&gt;&gt;</span><span class="tok-p">()</span> <span class="tok-p">{});</span>
+    <span class="tok-p">}</span>
+
+    <span class="tok-kd">public</span> <span class="tok-n">List</span><span class="tok-o">&lt;</span><span class="tok-n">PokemonType</span><span class="tok-o">&gt;</span> <span class="tok-nf">sortById</span><span class="tok-p">(){</span>
+        <span class="tok-c1">// TODO</span>
+    <span class="tok-p">}</span>
+
+    <span class="tok-kd">public</span> <span class="tok-n">Set</span><span class="tok-o">&lt;</span><span class="tok-n">PokemonType</span><span class="tok-o">&gt;</span> <span class="tok-nf">findByType</span><span class="tok-p">(</span><span class="tok-n">String</span> <span class="tok-n">type</span><span class="tok-p">)</span> <span class="tok-p">{</span>
+        <span class="tok-c1">// TODO</span>
+    <span class="tok-p">}</span>
+
+    <span class="tok-kd">public</span> <span class="tok-n">Optional</span><span class="tok-o">&lt;</span><span class="tok-n">PokemonType</span><span class="tok-o">&gt;</span> <span class="tok-nf">findFirstByTypes</span><span class="tok-p">(</span><span class="tok-n">String</span><span class="tok-p">...</span> <span class="tok-n">types</span><span class="tok-p">)</span> <span class="tok-p">{</span>
+        <span class="tok-c1">// TODO</span>
+    <span class="tok-p">}</span>
+<span class="tok-p">}</span>
+</pre></td></tr></table></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Vous pouvez valider vos développements avec la classe de test suivante :</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="java"><table class="linenotable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span></pre></div></td><td class="code"><pre><span></span><span class="tok-kd">public</span> <span class="tok-kd">class</span> <span class="tok-nc">PokemonStreamsTest</span> <span class="tok-p">{</span>
+
+    <span class="tok-n">PokemonStreams</span> <span class="tok-n">pokemonStreams</span><span class="tok-p">;</span>
+
+    <span class="tok-nd">@BeforeEach</span>
+    <span class="tok-kt">void</span> <span class="tok-nf">setUp</span><span class="tok-p">()</span> <span class="tok-kd">throws</span> <span class="tok-n">IOException</span> <span class="tok-p">{</span>
+        <span class="tok-n">pokemonStreams</span> <span class="tok-o">=</span> <span class="tok-k">new</span> <span class="tok-n">PokemonStreams</span><span class="tok-p">();</span>
+        <span class="tok-n">pokemonStreams</span><span class="tok-p">.</span><span class="tok-na">loadPokemonTypes</span><span class="tok-p">();</span>
+    <span class="tok-p">}</span>
+
+    <span class="tok-nd">@Test</span>
+    <span class="tok-kd">public</span> <span class="tok-kt">void</span> <span class="tok-nf">testSortById</span><span class="tok-p">(){</span>
+        <span class="tok-n">assertThat</span><span class="tok-p">(</span><span class="tok-n">pokemonStreams</span><span class="tok-p">.</span><span class="tok-na">sortById</span><span class="tok-p">())</span>
+                <span class="tok-p">.</span><span class="tok-na">extracting</span><span class="tok-p">(</span><span class="tok-n">it</span> <span class="tok-o">-&gt;</span> <span class="tok-n">it</span><span class="tok-p">.</span><span class="tok-na">id</span><span class="tok-p">())</span>
+                <span class="tok-p">.</span><span class="tok-na">isSorted</span><span class="tok-p">();</span>
+    <span class="tok-p">}</span>
+
+    <span class="tok-nd">@Test</span>
+    <span class="tok-kd">public</span> <span class="tok-kt">void</span> <span class="tok-nf">testFindElectricPokemons</span><span class="tok-p">(){</span>
+        <span class="tok-n">assertThat</span><span class="tok-p">(</span><span class="tok-n">pokemonStreams</span><span class="tok-p">.</span><span class="tok-na">findByType</span><span class="tok-p">(</span><span class="tok-s">&quot;electric&quot;</span><span class="tok-p">))</span>
+                <span class="tok-p">.</span><span class="tok-na">hasSize</span><span class="tok-p">(</span><span class="tok-mi">9</span><span class="tok-p">);</span>
+    <span class="tok-p">}</span>
+
+    <span class="tok-nd">@Test</span>
+    <span class="tok-kd">public</span> <span class="tok-kt">void</span> <span class="tok-nf">testFindFirePokemons</span><span class="tok-p">(){</span>
+        <span class="tok-n">assertThat</span><span class="tok-p">(</span><span class="tok-n">pokemonStreams</span><span class="tok-p">.</span><span class="tok-na">findByType</span><span class="tok-p">(</span><span class="tok-s">&quot;fire&quot;</span><span class="tok-p">))</span>
+                <span class="tok-p">.</span><span class="tok-na">hasSize</span><span class="tok-p">(</span><span class="tok-mi">12</span><span class="tok-p">);</span>
+    <span class="tok-p">}</span>
+
+    <span class="tok-nd">@Test</span>
+    <span class="tok-kd">public</span> <span class="tok-kt">void</span> <span class="tok-nf">testFindFirstPsychicPokemon</span><span class="tok-p">(){</span>
+        <span class="tok-n">assertThat</span><span class="tok-p">(</span><span class="tok-n">pokemonStreams</span><span class="tok-p">.</span><span class="tok-na">findFirstByTypes</span><span class="tok-p">(</span><span class="tok-s">&quot;psychic&quot;</span><span class="tok-p">))</span>
+                <span class="tok-p">.</span><span class="tok-na">isNotEmpty</span><span class="tok-p">()</span>
+                <span class="tok-p">.</span><span class="tok-na">get</span><span class="tok-p">()</span>
+                <span class="tok-p">.</span><span class="tok-na">extracting</span><span class="tok-p">(</span><span class="tok-s">&quot;name&quot;</span><span class="tok-p">)</span>
+                <span class="tok-p">.</span><span class="tok-na">isEqualTo</span><span class="tok-p">(</span><span class="tok-s">&quot;abra&quot;</span><span class="tok-p">);</span>
+    <span class="tok-p">}</span>
+
+    <span class="tok-nd">@Test</span>
+    <span class="tok-kd">public</span> <span class="tok-kt">void</span> <span class="tok-nf">testFindFirstUnknownPokemon</span><span class="tok-p">(){</span>
+        <span class="tok-n">assertThat</span><span class="tok-p">(</span><span class="tok-n">pokemonStreams</span><span class="tok-p">.</span><span class="tok-na">findFirstByTypes</span><span class="tok-p">(</span><span class="tok-s">&quot;unknown&quot;</span><span class="tok-p">))</span>
+                <span class="tok-p">.</span><span class="tok-na">isEmpty</span><span class="tok-p">();</span>
+    <span class="tok-p">}</span>
+<span class="tok-p">}</span>
+</pre></td></tr></table></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>La méthode <code>assertThat</code> provient de l&#8217;import <code>import static org.assertj.core.api.Assertions.assertThat;</code></p>
+</div>
+<div class="paragraph">
+<p>Vous aurez besoin de la librairie <code>assertj</code> dans votre classpath de test:</p>
+</div>
+<div class="listingblock">
+<div class="title">pom.xml</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="xml"><table class="linenotable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span></pre></div></td><td class="code"><pre><span></span><span class="tok-nt">&lt;dependency&gt;</span>
+    <span class="tok-nt">&lt;groupId&gt;</span>org.assertj<span class="tok-nt">&lt;/groupId&gt;</span>
+    <span class="tok-nt">&lt;artifactId&gt;</span>assertj-core<span class="tok-nt">&lt;/artifactId&gt;</span>
+    <span class="tok-nt">&lt;version&gt;</span>3.23.1<span class="tok-nt">&lt;/version&gt;</span>
+    <span class="tok-nt">&lt;scope&gt;</span>test<span class="tok-nt">&lt;/scope&gt;</span>
+<span class="tok-nt">&lt;/dependency&gt;</span>
+</pre></td></tr></table></code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_multi_line_strings"><a class="anchor" href="#_multi_line_strings"></a><a class="link" href="#_multi_line_strings">4. Multi-Line Strings</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Importez le test suivant, et faites ce qu&#8217;il faut pour qu&#8217;il passe !</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="java"><table class="linenotable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span></pre></div></td><td class="code"><pre><span></span><span class="tok-kd">public</span> <span class="tok-kd">class</span> <span class="tok-nc">TextBlockTest</span> <span class="tok-p">{</span>
+
+    <span class="tok-n">ObjectMapper</span> <span class="tok-n">objectMapper</span><span class="tok-p">;</span>
+
+    <span class="tok-nd">@BeforeEach</span>
+    <span class="tok-kt">void</span> <span class="tok-nf">setUp</span><span class="tok-p">()</span> <span class="tok-p">{</span>
+        <span class="tok-n">objectMapper</span> <span class="tok-o">=</span> <span class="tok-k">new</span> <span class="tok-n">ObjectMapper</span><span class="tok-p">();</span>
+        <span class="tok-n">objectMapper</span><span class="tok-p">.</span><span class="tok-na">configure</span><span class="tok-p">(</span><span class="tok-n">DeserializationFeature</span><span class="tok-p">.</span><span class="tok-na">FAIL_ON_UNKNOWN_PROPERTIES</span><span class="tok-p">,</span> <span class="tok-kc">false</span><span class="tok-p">);</span>
+    <span class="tok-p">}</span>
+
+    <span class="tok-nd">@Test</span>
+    <span class="tok-kt">void</span> <span class="tok-nf">pokemonAsJsonString</span><span class="tok-p">()</span> <span class="tok-kd">throws</span> <span class="tok-n">JsonProcessingException</span> <span class="tok-p">{</span>
+        <span class="tok-kd">var</span> <span class="tok-n">jsonStringOldFashioned</span> <span class="tok-o">=</span> <span class="tok-s">&quot;{\n&quot;</span> <span class="tok-o">+</span>
+                <span class="tok-s">&quot;    \&quot;id\&quot;: 47,\n&quot;</span> <span class="tok-o">+</span>
+                <span class="tok-s">&quot;    \&quot;name\&quot;: \&quot;parasect\&quot;,\n&quot;</span> <span class="tok-o">+</span>
+                <span class="tok-s">&quot;    \&quot;baseExperience\&quot;: 142,\n&quot;</span> <span class="tok-o">+</span>
+                <span class="tok-s">&quot;    \&quot;weight\&quot;: 295,\n&quot;</span> <span class="tok-o">+</span>
+                <span class="tok-s">&quot;    \&quot;height\&quot;: 10,\n&quot;</span> <span class="tok-o">+</span>
+                <span class="tok-s">&quot;    \&quot;types\&quot;: [\n&quot;</span> <span class="tok-o">+</span>
+                <span class="tok-s">&quot;      \&quot;grass\&quot;,\n&quot;</span> <span class="tok-o">+</span>
+                <span class="tok-s">&quot;      \&quot;bug\&quot;\n&quot;</span> <span class="tok-o">+</span>
+                <span class="tok-s">&quot;    ],\n&quot;</span> <span class="tok-o">+</span>
+                <span class="tok-s">&quot;    \&quot;stats\&quot;: {\n&quot;</span> <span class="tok-o">+</span>
+                <span class="tok-s">&quot;      \&quot;speed\&quot;: 30,\n&quot;</span> <span class="tok-o">+</span>
+                <span class="tok-s">&quot;      \&quot;attack\&quot;: 95,\n&quot;</span> <span class="tok-o">+</span>
+                <span class="tok-s">&quot;      \&quot;defense\&quot;: 80,\n&quot;</span> <span class="tok-o">+</span>
+                <span class="tok-s">&quot;      \&quot;hp\&quot;: 60\n&quot;</span> <span class="tok-o">+</span>
+                <span class="tok-s">&quot;    },\n&quot;</span> <span class="tok-o">+</span>
+                <span class="tok-s">&quot;    \&quot;sprites\&quot;: {\n&quot;</span> <span class="tok-o">+</span>
+                <span class="tok-s">&quot;      \&quot;front_default\&quot;: \&quot;https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/47.png\&quot;,\n&quot;</span> <span class="tok-o">+</span>
+                <span class="tok-s">&quot;      \&quot;back_default\&quot;: \&quot;https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/47.png\&quot;\n&quot;</span> <span class="tok-o">+</span>
+                <span class="tok-s">&quot;    }\n&quot;</span> <span class="tok-o">+</span>
+                <span class="tok-s">&quot;  }&quot;</span><span class="tok-p">;</span>
+        <span class="tok-kd">var</span> <span class="tok-n">pokemonTypeFromJsonString</span> <span class="tok-o">=</span> <span class="tok-n">objectMapper</span><span class="tok-p">.</span><span class="tok-na">readValue</span><span class="tok-p">(</span><span class="tok-n">jsonStringOldFashioned</span><span class="tok-p">,</span> <span class="tok-n">PokemonType</span><span class="tok-p">.</span><span class="tok-na">class</span><span class="tok-p">);</span>
+        <span class="tok-n">System</span><span class="tok-p">.</span><span class="tok-na">out</span><span class="tok-p">.</span><span class="tok-na">println</span><span class="tok-p">(</span><span class="tok-s">&quot;pokemonType.toString() = &quot;</span> <span class="tok-o">+</span> <span class="tok-n">pokemonTypeFromJsonString</span><span class="tok-p">.</span><span class="tok-na">toString</span><span class="tok-p">());</span>
+
+
+        <span class="tok-c1">// TODO : écrivez un text block ici !</span>
+        <span class="tok-n">String</span> <span class="tok-n">textBlockString</span> <span class="tok-o">=</span> <span class="tok-kc">null</span><span class="tok-p">;</span>
+        <span class="tok-kd">var</span> <span class="tok-n">pokemonTypeFromTextBlock</span> <span class="tok-o">=</span> <span class="tok-n">objectMapper</span><span class="tok-p">.</span><span class="tok-na">readValue</span><span class="tok-p">(</span><span class="tok-n">textBlockString</span><span class="tok-p">,</span> <span class="tok-n">PokemonType</span><span class="tok-p">.</span><span class="tok-na">class</span><span class="tok-p">);</span>
+
+        <span class="tok-n">assertThat</span><span class="tok-p">(</span><span class="tok-n">pokemonTypeFromJsonString</span><span class="tok-p">).</span><span class="tok-na">isEqualTo</span><span class="tok-p">(</span><span class="tok-n">pokemonTypeFromTextBlock</span><span class="tok-p">);</span>
+    <span class="tok-p">}</span>
+<span class="tok-p">}</span>
+</pre></td></tr></table></code></pre>
+</div>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-09-16 11:23:27 +0200
+Last updated 2022-09-21 07:12:51 +0200
 </div>
 </div>
 </body>
