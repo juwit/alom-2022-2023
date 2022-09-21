@@ -83,6 +83,12 @@ public class Helloworld extends Thread {
       if(random.nextInt(100) < 10) {
         this.logs.put((System.nanoTime()-startTime),"Thread["+name+"] yield");
         yield();
+        try {
+          Thread.sleep(10);
+        }
+        catch(InterruptedException e){
+            // nothing to do :)
+        }
       }
     }
   }
