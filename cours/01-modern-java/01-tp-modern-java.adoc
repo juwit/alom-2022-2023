@@ -80,10 +80,6 @@ Il vous faut également surcharger la version du `maven-surefire-plugin`
 <pluginManagement>
     <plugins>
         <plugin>
-            <artifactId>maven-war-plugin</artifactId>
-            <version>3.2.2</version>
-        </plugin>
-        <plugin>
             <artifactId>maven-surefire-plugin</artifactId>
             <version>2.22.1</version> <!--1-->
         </plugin>
