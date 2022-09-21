@@ -63,6 +63,12 @@ Ajoutez les dépendances JUnit:
     <version>5.9.0</version>
     <scope>test</scope>
 </dependency>
+<dependency>
+    <groupId>org.assertj</groupId>
+    <artifactId>assertj-core</artifactId>
+    <version>3.23.1</version>
+    <scope>test</scope>
+</dependency>
 ----
 
 Il vous faut également surcharger la version du `maven-surefire-plugin`
@@ -236,21 +242,6 @@ public class PokemonStreamsTest {
                 .isEmpty();
     }
 }
-----
-
-La méthode `assertThat` provient de l'import `import static org.assertj.core.api.Assertions.assertThat;`
-
-Vous aurez besoin de la librairie `assertj` dans votre classpath de test:
-
-.pom.xml
-[source,xml,linenums]
-----
-<dependency>
-    <groupId>org.assertj</groupId>
-    <artifactId>assertj-core</artifactId>
-    <version>3.23.1</version>
-    <scope>test</scope>
-</dependency>
 ----
 
 == Multi-Line Strings

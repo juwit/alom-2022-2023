@@ -637,7 +637,13 @@ Maven considère par défaut que le code est écrit en Java 7 !
 <span class="normal"> 9</span>
 <span class="normal">10</span>
 <span class="normal">11</span>
-<span class="normal">12</span></pre></div></td><td class="code"><pre><span></span><span class="tok-nt">&lt;dependency&gt;</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span></pre></div></td><td class="code"><pre><span></span><span class="tok-nt">&lt;dependency&gt;</span>
     <span class="tok-nt">&lt;groupId&gt;</span>org.junit.jupiter<span class="tok-nt">&lt;/groupId&gt;</span>
     <span class="tok-nt">&lt;artifactId&gt;</span>junit-jupiter-api<span class="tok-nt">&lt;/artifactId&gt;</span>
     <span class="tok-nt">&lt;version&gt;</span>5.9.0<span class="tok-nt">&lt;/version&gt;</span>
@@ -647,6 +653,12 @@ Maven considère par défaut que le code est écrit en Java 7 !
     <span class="tok-nt">&lt;groupId&gt;</span>org.junit.jupiter<span class="tok-nt">&lt;/groupId&gt;</span>
     <span class="tok-nt">&lt;artifactId&gt;</span>junit-jupiter-engine<span class="tok-nt">&lt;/artifactId&gt;</span>
     <span class="tok-nt">&lt;version&gt;</span>5.9.0<span class="tok-nt">&lt;/version&gt;</span>
+    <span class="tok-nt">&lt;scope&gt;</span>test<span class="tok-nt">&lt;/scope&gt;</span>
+<span class="tok-nt">&lt;/dependency&gt;</span>
+<span class="tok-nt">&lt;dependency&gt;</span>
+    <span class="tok-nt">&lt;groupId&gt;</span>org.assertj<span class="tok-nt">&lt;/groupId&gt;</span>
+    <span class="tok-nt">&lt;artifactId&gt;</span>assertj-core<span class="tok-nt">&lt;/artifactId&gt;</span>
+    <span class="tok-nt">&lt;version&gt;</span>3.23.1<span class="tok-nt">&lt;/version&gt;</span>
     <span class="tok-nt">&lt;scope&gt;</span>test<span class="tok-nt">&lt;/scope&gt;</span>
 <span class="tok-nt">&lt;/dependency&gt;</span>
 </pre></td></tr></table></code></pre>
@@ -987,29 +999,6 @@ Maven considère par défaut que le code est écrit en Java 7 !
 </pre></td></tr></table></code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>La méthode <code>assertThat</code> provient de l&#8217;import <code>import static org.assertj.core.api.Assertions.assertThat;</code></p>
-</div>
-<div class="paragraph">
-<p>Vous aurez besoin de la librairie <code>assertj</code> dans votre classpath de test:</p>
-</div>
-<div class="listingblock">
-<div class="title">pom.xml</div>
-<div class="content">
-<pre class="pygments highlight"><code data-lang="xml"><table class="linenotable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span>
-<span class="normal">6</span></pre></div></td><td class="code"><pre><span></span><span class="tok-nt">&lt;dependency&gt;</span>
-    <span class="tok-nt">&lt;groupId&gt;</span>org.assertj<span class="tok-nt">&lt;/groupId&gt;</span>
-    <span class="tok-nt">&lt;artifactId&gt;</span>assertj-core<span class="tok-nt">&lt;/artifactId&gt;</span>
-    <span class="tok-nt">&lt;version&gt;</span>3.23.1<span class="tok-nt">&lt;/version&gt;</span>
-    <span class="tok-nt">&lt;scope&gt;</span>test<span class="tok-nt">&lt;/scope&gt;</span>
-<span class="tok-nt">&lt;/dependency&gt;</span>
-</pre></td></tr></table></code></pre>
-</div>
-</div>
 </div>
 </div>
 <div class="sect1">
@@ -1115,7 +1104,7 @@ Maven considère par défaut que le code est écrit en Java 7 !
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-09-21 07:12:51 +0200
+Last updated 2022-09-21 11:22:18 +0200
 </div>
 </div>
 </body>
