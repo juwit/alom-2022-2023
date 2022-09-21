@@ -60,11 +60,12 @@ Pour commencer, créons une première servlet.
 
 ==== Création de l'arborescence projet
 
-Créez un nouveau répertoire, et ajoutez-y les répertoires de sources java et de test
+Initialisez un repository Github avec ce lien : https://classroom.github.com/a/o70p2cXI
+
+Ajoutez-y les répertoires de sources java et de test:
 
 [source,bash]
 ----
-$ cd tp-handcraft
 $ mkdir -p src/main/java
 $ mkdir -p src/test/java
 ----
