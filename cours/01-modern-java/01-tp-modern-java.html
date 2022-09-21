@@ -671,21 +671,25 @@ Maven considère par défaut que le code est écrit en Java 7 !
 <div class="listingblock">
 <div class="title">pom.xml</div>
 <div class="content">
-<pre class="pygments highlight"><code data-lang="xml"><table class="linenotable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span>
-<span class="normal">6</span>
-<span class="normal">7</span>
-<span class="normal">8</span></pre></div></td><td class="code"><pre><span></span><span class="tok-nt">&lt;pluginManagement&gt;</span>
+<pre class="pygments highlight"><code data-lang="xml"><table class="linenotable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span></pre></div></td><td class="code"><pre><span></span><span class="tok-nt">&lt;build&gt;</span>
+  <span class="tok-nt">&lt;pluginManagement&gt;</span>
     <span class="tok-nt">&lt;plugins&gt;</span>
         <span class="tok-nt">&lt;plugin&gt;</span>
             <span class="tok-nt">&lt;artifactId&gt;</span>maven-surefire-plugin<span class="tok-nt">&lt;/artifactId&gt;</span>
             <span class="tok-nt">&lt;version&gt;</span>2.22.1<span class="tok-nt">&lt;/version&gt;</span> <i class="conum" data-value="1"></i><b>(1)</b>
         <span class="tok-nt">&lt;/plugin&gt;</span>
     <span class="tok-nt">&lt;/plugins&gt;</span>
-<span class="tok-nt">&lt;/pluginManagement&gt;</span>
+  <span class="tok-nt">&lt;/pluginManagement&gt;</span>
+<span class="tok-nt">&lt;/build&gt;</span>
 </pre></td></tr></table></code></pre>
 </div>
 </div>
@@ -1096,7 +1100,7 @@ Maven considère par défaut que le code est écrit en Java 7 !
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-09-21 11:25:28 +0200
+Last updated 2022-09-21 11:28:31 +0200
 </div>
 </div>
 </body>
