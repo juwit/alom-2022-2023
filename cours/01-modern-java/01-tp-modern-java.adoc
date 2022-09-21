@@ -106,7 +106,7 @@ Créez les records suivant:
 
 * Pokemon
 ** type: PokemonType
-** nickname: name
+** nickname: String
 ** level: int
 
 Le record `PokemonType` représente les types de Pokemon (Pikachu, Rattata, ...).
