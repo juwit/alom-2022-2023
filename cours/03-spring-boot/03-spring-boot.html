@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="fr">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>ALOM - Spring</title>
+
+		<meta name="description" content="ALOM - Spring">
+		<meta name="author" content="Julien WITTOUCK <julien@codeka.io>">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="../reveal/dist/reveal.css">
+		<link rel="stylesheet" href="../reveal/dist/theme/white.css" id="theme">
+
+		<link rel="stylesheet" href="../css/miage-lille.css"/>
+
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<div class="slides">
+				<section>
+					<h1>ALOM</h1>
+                    <img src="images/spring-by-pivotal.png" style="width: 50%;"/>
+				</section>
+
+                <section>
+					<h2><i class="fab fa-uber"></i> UBER</h2>
+                    <img src="images/Microservice-Architecture-Of-UBER.png" style="width: 50%"/>
+                </section>
+
+                <section>
+                    <h2>Un micro-service c'est :</h2>
+                    <ul>
+                        <li>
+                            Un ensemble de fonctionnalités du même domaine métier
+                        </li>
+						<li>
+							Un ou plusieurs canaux de communication
+							<ul>
+								<li>HTTP - REST/JSON</li>
+							</ul>
+						</li>
+                        <li>
+                            Une source de données dédiée
+                        </li>
+                    </ul>
+                    <img src="images/micro-service-poke.png"/>
+                </section>
+
+                <section>
+                    <h2>🔎 un micro-service Java</h2>
+                    <p>On s'appuie sur les technologies connues: les servlets !</p>
+                    <img src="images/architecture.svg"/>
+                </section>
+
+				<section>
+					<h2>Spring dans tout ça?</h2>
+					<img src="images/fry.png"/>
+				</section>
+
+				<section>
+					<img src="images/spring-by-pivotal.png" style="width: 50%;">
+                    <ul>
+                        <li>Framework pour le développement d'applications</li>
+                        <li>Développé par la société Pivotal</li>
+                        <li>open-source (licence apache) <a href="https://github.com/spring-projects"><i class="fab fa-github"></i></a></li>
+                    </ul>
+                </section>
+                <section>
+                    <img src="images/spring-by-pivotal.png" style="width: 30%;">
+                    <p>Décomposé en sous-projets</p>
+                    <ul>
+                        <li>spring-boot-starter-parent : projet principal, gestion des dépendances</li>
+                        <li>spring-boot-starter-web : construction d'API REST/JSON</li>
+						<li>spring-boot-starter-mvc : construction d'IHM</li>
+						<li>spring-boot-starter-data-jpa : connexion à des bases de données</li>
+                    </ul>
+				</section>
+
+				<section>
+					<h2>💉 Dependency injection</h2>
+				</section>
+
+				<section>
+                    <h3>🚗 un morceau d'UBER</h3>
+					<img src="images/passenger.png"/>
+				</section>
+
+				<section>
+					<h3>🏗️ La vision architecture</h3>
+					<img src="images/passenger-archi.png"/>
+				</section>
+
+				<section>
+					<h3>🤔 Le code du NotificationService</h3>
+					<img src="carbon/notificationService.png" style="width: 70%;"/>
+					<p class="fragment">❓ Quel est le problème de ce code?</p>
+				</section>
+				<section>
+					<h3>👮 S.O.L.I.D principles</h3>
+					<ul>
+						<li>S : Single Responsability</li>
+						<span class="fragment">Une classe doit avoir une seule responsabilité</span>
+						<li>O : Open/Closed</li>
+						<span class="fragment">Ouvert à l'extension, mais fermé à la modification</span>
+						<li>L : Liskov Substitution</li>
+						<span class="fragment">Pouvoir utiliser un sous-type</span>
+						<li>I : Interface Segregation</li>
+						<span class="fragment">Présenter plusieurs interfaces spécifiques</span>
+						<li>D : Dependency Inversion</li>
+						<span class="fragment">Dépendre d'abstractions, et non d'implémentations</span>
+					</ul>
+				</section>
+				<section>
+					<h3>👮 Is it S.O.L.I.D ?</h3>
+					<div>
+						<img src="carbon/notificationService.png" style="width: 70%; float: left"/>
+						<table>
+							<tbody>
+							<tr><td>S</td><td><i class="fragment">❌</i></td></tr>
+							<tr><td>O</td><td><i class="fragment">❌</i></td></tr>
+							<tr><td>L</td><td><i class="fragment">❌</i></td></tr>
+							<tr><td>I</td><td><i class="fragment">❌</i></td></tr>
+							<tr><td>D</td><td><i class="fragment">❌</i></td></tr>
+							</tbody>
+						</table>
+					</div>
+				</section>
+				<section>
+					<h2>🚑 Refactoring !</h2>
+					<div>
+						<img src="carbon/notificationServiceRefacto.png" style="width: 60%; float: left;"/>
+						<table>
+							<tbody>
+								<tr><td>S</td><td><i class="fragment">✅</i></td></tr>
+								<tr><td>O</td><td><i class="fragment">✅</i></td></tr>
+								<tr><td>L</td><td><i class="fragment">✅</i></td></tr>
+								<tr><td>I</td><td><i class="fragment">✅</i></td></tr>
+								<tr><td>D</td><td><i class="fragment">✅</i></td></tr>
+							</tbody>
+						</table>
+					</div>
+				</section>
+				<section>
+					<h2>ℹ️</h2>
+					<p>Rendre notre code S.O.L.I.D :</p>
+					<ul>
+						<li class="fragment">Le rend testable</li>
+						<li class="fragment">Le rend compatible avec de l'injection de dépendances</li>
+					</ul>
+				</section>
+				<section>
+					<h2>💉 Injection de dépendance</h2>
+					<p>Laisser la plateforme fournir les dépendances:</p>
+					<ul>
+						<li>En fonction du contexte</li>
+						<li>En fonction des composants disponibles</li>
+					</ul>
+					<p>Nécessite des efforts de conception objet!</p>
+				</section>
+
+				<section>
+					<h2>💉 Injection de dépendances avec <img src="images/spring-by-pivotal.png" style="height: 1.5em; vertical-align: middle;"></h2>
+				</section>
+				<section>
+					<h4>💉 Injection de dépendances avec <img src="images/spring-by-pivotal.png" style="height: 1.5em; vertical-align: middle;"></h4>
+					<p>spring-core : découpage de l'application en "beans" = composants</p>
+					<p>Fournit un mécanisme d'injection de dépendance</p>
+					<ul>
+						<li>Inversion de contrôle (gestion du cycle de vie des beans)</li>
+						<li>Injection de dépendances</li>
+					</ul>
+				</section>
+				<section>
+					<h2>Application context</h2>
+					<img src="images/application_context.png"/>
+				</section>
+                <section>
+                    <h2>Notre service de notification</h2>
+                    <img src="carbon/notificationServiceSpring.png" style="width: 60%; float: left;"/>
+                </section>
+
+				<section data-markdown>
+					## Spring-Boot
+					"Extension" à Spring
+
+					Fournit la configuration automatique des frameworks les plus utilisés:
+
+					* spring-web
+					* spring-security
+					* jpa
+					* mongodb
+					* ...
+				</section>
+
+				<section data-markdown>
+					## Spring-Boot
+
+					Les applications sont packagées dans des `jar` auto-portés.
+
+					Le `jar` contient le code de l'application, plus les librairies (spring-core, spring-web, etc...).
+
+					Les applications contiennent un `main` Java, qui démarre Spring-Boot.
+
+					Adapté à un écosystème 🐳 containers
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+					### Spring-Boot
+
+					Un `pom.xml` parent:
+
+					```xml
+					<parent>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-starter-parent</artifactId>
+						<version>2.7.4</version>
+						<relativePath/> <!-- lookup parent from repository -->
+					</parent>
+					```
+
+					Liste toutes les versions de dépendances possibles/compatibles.
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+					### `spring-boot-starter-web`
+
+					* configure `spring-web`
+					* embarque un tomcat-embedded
+					* démarre l'application 'courante' dans le tomcat
+					* écoute sur le port `8080`
+					* configure `jackson-databind` pour retourner du JSON pour les controlleurs annotés `@RestController`
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						### `spring-boot-starter-web`
+
+						Utilisation dans un projet :
+
+						```xml
+						<dependencies>
+							...
+							<dependency>
+								<groupId>org.springframework.boot</groupId>
+								<artifactId>spring-boot-starter-web</artifactId>
+							</dependency>
+							...
+						</dependencies>
+						```
+						On ne précise pas la version, elle est dans le `pom.xml` parent 🤯 !
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						### Spring-Boot
+
+						On déclare un `main` java dans une classe annotée :
+
+						```java
+						@SpringBootApplication
+						public class MyApp {
+
+							public static void main(String[] args) {
+								SpringApplication.run(MyApp.class, args);
+							}
+
+						}
+						```
+					</textarea>
+				</section>
+
+				<section>
+					<h2>TP</h2>
+					<img src="../images/leonidas.png"/>
+					<p>
+						<a href="03-tp-spring.html">Jouer avec spring-boot !</a>
+					</p>
+				</section>
+
+				<section style="text-align:left;">
+					<h1>Fin du cours</h1>
+					<p>Cours suivant : <br/>
+						<a href="../04-jpa/04-jpa.html">Persistance des données avec JPA</a>
+					</p>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="../reveal/dist/reveal.js"></script>
+		<script src="../reveal/plugin/markdown/markdown.js"></script>
+		<link rel="stylesheet" href="../reveal/plugin/highlight/zenburn.css">
+		<script src="../reveal/plugin/highlight/highlight.js"></script>
+		<script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				hash: true,
+
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMarkdown, RevealHighlight ]
+			});
+		</script>
+
+		<aside class="miage_aside_logo"></aside>
+
+    </body>
+</html>
