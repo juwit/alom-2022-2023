@@ -934,6 +934,8 @@ Dans IntelliJ, vous pouvez également vous connecter à votre base de données, 
 
 WARNING: Pour cette partie, je dois vous donner les droits d'accès à l'organisation. Appelez moi pour que je puisse le faire avec vous !
 
+NOTE: Ajoutez votre email associé à votre compte Github dans ce formulaire: https://forms.gle/sRTiS3AzTWSDJ9eM7
+
 ==== Configuration de votre application
 
 Clever-Cloud est capable d'exécuter tout type d'applicaton.
