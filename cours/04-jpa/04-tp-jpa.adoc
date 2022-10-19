@@ -640,9 +640,9 @@ Créer un fichier `application.properties` dans le répertoire `src/main/resourc
 .src/main/resources/application.properties
 [source,properties,linenums]
 ----
-# on demande un niveau de logs TRACE à spring-web
+# on demande un niveau de logs TRACE a spring-web
 logging.level.web=TRACE
-# on modifie le port par defaut  du tomcat !
+# on modifie le port par defaut du tomcat !
 server.port=8081
 ----
 
