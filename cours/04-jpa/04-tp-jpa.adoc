@@ -902,7 +902,7 @@ spring.datasource.username=uavsnnvtbaqfme3yhamr
 spring.datasource.password=rfeKGj4Vr6iExFDkVi0R
 
 # personnalisation de hibernate <2>
-spring.jpa.hibernate.ddl-auto = create-drop
+spring.jpa.hibernate.ddl-auto=update
 
 # personnalisation du pool de connexions <3>
 spring.datasource.hikari.maximum-pool-size=1
