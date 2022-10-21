@@ -576,7 +576,7 @@ Clever vous donne ensuite un remote git sur lequel vous pouvez push votre code p
 
 La classe du business object va être la copie de la classe du micro-service que l'on va consommer.
 
-Nous avons donc besoin ici de trois record (que vous pouvez copier/coller depuis votre TP 3 !) :
+Nous avons donc besoin ici de deux record (que vous pouvez copier/coller depuis votre TP 3 !) :
 
 * PokemonType: représentation d'un type de Pokemon
 * Sprites: représentation des images du Pokemon (avant et arrière)
@@ -814,7 +814,9 @@ class PokemonTypeControllerTest {
     void pokemons_shouldReturnAModelAndView() {
         var pokemonTypeService = mock(PokemonTypeService.class);
 
-        when(pokemonTypeService.listPokemonsTypes()).thenReturn(List.of(new PokemonType(), new PokemonType()));
+        var pikachu = new PokemonType("pikachu", 25);
+
+        when(pokemonTypeService.listPokemonsTypes()).thenReturn(List.of(pikachu));
 
         var pokemonTypeController = new PokemonTypeController();
         pokemonTypeController.setPokemonTypeService(pokemonTypeService);
@@ -822,7 +824,7 @@ class PokemonTypeControllerTest {
 
         assertEquals("pokedex", modelAndView.getViewName());
         var pokemons = (List<PokemonType>)modelAndView.getModel().get("pokemonTypes");
-        assertEquals(2, pokemons.size());
+        assertEquals(1, pokemons.size());
         verify(pokemonTypeService).listPokemonsTypes();
     }
 

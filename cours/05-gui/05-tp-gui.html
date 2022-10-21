@@ -1660,7 +1660,7 @@ Nous allons lui indiquer quel tâche maven appeler pour démarrer notre applicat
 <p>La classe du business object va être la copie de la classe du micro-service que l&#8217;on va consommer.</p>
 </div>
 <div class="paragraph">
-<p>Nous avons donc besoin ici de trois record (que vous pouvez copier/coller depuis votre TP 3 !) :</p>
+<p>Nous avons donc besoin ici de deux record (que vous pouvez copier/coller depuis votre TP 3 !) :</p>
 </div>
 <div class="ulist">
 <ul>
@@ -2118,7 +2118,9 @@ Un guide intéressant sur l&#8217;injection de valeurs avec l&#8217;annotation @
 <span class="normal">43</span>
 <span class="normal">44</span>
 <span class="normal">45</span>
-<span class="normal">46</span></pre></div></td><td class="code"><pre><span></span><span class="tok-kn">package</span> <span class="tok-nn">com.miage.alom.game_ui.controller</span><span class="tok-p">;</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span></pre></div></td><td class="code"><pre><span></span><span class="tok-kn">package</span> <span class="tok-nn">com.miage.alom.game_ui.controller</span><span class="tok-p">;</span>
 
 <span class="tok-kn">import</span> <span class="tok-nn">com.miage.alom.game_ui.pokemonTypes.bo.PokemonType</span><span class="tok-p">;</span>
 <span class="tok-kn">import</span> <span class="tok-nn">com.miage.alom.game_ui.pokemonTypes.service.PokemonTypeService</span><span class="tok-p">;</span>
@@ -2141,7 +2143,9 @@ Un guide intéressant sur l&#8217;injection de valeurs avec l&#8217;annotation @
     <span class="tok-kt">void</span> <span class="tok-nf">pokemons_shouldReturnAModelAndView</span><span class="tok-p">()</span> <span class="tok-p">{</span>
         <span class="tok-kd">var</span> <span class="tok-n">pokemonTypeService</span> <span class="tok-o">=</span> <span class="tok-n">mock</span><span class="tok-p">(</span><span class="tok-n">PokemonTypeService</span><span class="tok-p">.</span><span class="tok-na">class</span><span class="tok-p">);</span>
 
-        <span class="tok-n">when</span><span class="tok-p">(</span><span class="tok-n">pokemonTypeService</span><span class="tok-p">.</span><span class="tok-na">listPokemonsTypes</span><span class="tok-p">()).</span><span class="tok-na">thenReturn</span><span class="tok-p">(</span><span class="tok-n">List</span><span class="tok-p">.</span><span class="tok-na">of</span><span class="tok-p">(</span><span class="tok-k">new</span> <span class="tok-n">PokemonType</span><span class="tok-p">(),</span> <span class="tok-k">new</span> <span class="tok-n">PokemonType</span><span class="tok-p">()));</span>
+        <span class="tok-kd">var</span> <span class="tok-n">pikachu</span> <span class="tok-o">=</span> <span class="tok-k">new</span> <span class="tok-n">PokemonType</span><span class="tok-p">(</span><span class="tok-s">&quot;pikachu&quot;</span><span class="tok-p">,</span> <span class="tok-mi">25</span><span class="tok-p">);</span>
+
+        <span class="tok-n">when</span><span class="tok-p">(</span><span class="tok-n">pokemonTypeService</span><span class="tok-p">.</span><span class="tok-na">listPokemonsTypes</span><span class="tok-p">()).</span><span class="tok-na">thenReturn</span><span class="tok-p">(</span><span class="tok-n">List</span><span class="tok-p">.</span><span class="tok-na">of</span><span class="tok-p">(</span><span class="tok-n">pikachu</span><span class="tok-p">));</span>
 
         <span class="tok-kd">var</span> <span class="tok-n">pokemonTypeController</span> <span class="tok-o">=</span> <span class="tok-k">new</span> <span class="tok-n">PokemonTypeController</span><span class="tok-p">();</span>
         <span class="tok-n">pokemonTypeController</span><span class="tok-p">.</span><span class="tok-na">setPokemonTypeService</span><span class="tok-p">(</span><span class="tok-n">pokemonTypeService</span><span class="tok-p">);</span>
@@ -2149,7 +2153,7 @@ Un guide intéressant sur l&#8217;injection de valeurs avec l&#8217;annotation @
 
         <span class="tok-n">assertEquals</span><span class="tok-p">(</span><span class="tok-s">&quot;pokedex&quot;</span><span class="tok-p">,</span> <span class="tok-n">modelAndView</span><span class="tok-p">.</span><span class="tok-na">getViewName</span><span class="tok-p">());</span>
         <span class="tok-kd">var</span> <span class="tok-n">pokemons</span> <span class="tok-o">=</span> <span class="tok-p">(</span><span class="tok-n">List</span><span class="tok-o">&lt;</span><span class="tok-n">PokemonType</span><span class="tok-o">&gt;</span><span class="tok-p">)</span><span class="tok-n">modelAndView</span><span class="tok-p">.</span><span class="tok-na">getModel</span><span class="tok-p">().</span><span class="tok-na">get</span><span class="tok-p">(</span><span class="tok-s">&quot;pokemonTypes&quot;</span><span class="tok-p">);</span>
-        <span class="tok-n">assertEquals</span><span class="tok-p">(</span><span class="tok-mi">2</span><span class="tok-p">,</span> <span class="tok-n">pokemons</span><span class="tok-p">.</span><span class="tok-na">size</span><span class="tok-p">());</span>
+        <span class="tok-n">assertEquals</span><span class="tok-p">(</span><span class="tok-mi">1</span><span class="tok-p">,</span> <span class="tok-n">pokemons</span><span class="tok-p">.</span><span class="tok-na">size</span><span class="tok-p">());</span>
         <span class="tok-n">verify</span><span class="tok-p">(</span><span class="tok-n">pokemonTypeService</span><span class="tok-p">).</span><span class="tok-na">listPokemonsTypes</span><span class="tok-p">();</span>
     <span class="tok-p">}</span>
 
@@ -2334,7 +2338,7 @@ Attention, si le template n&#8217;est pas correct, la vue ne s&#8217;affichera p
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-10-19 09:15:46 +0200
+Last updated 2022-10-21 09:31:13 +0200
 </div>
 </div>
 </body>
