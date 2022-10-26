@@ -215,6 +215,8 @@ image::images/type-table.png[]
 
 Appliquez les modificateurs de type dans votre `battle-api` !
 
+Le lien pour créer le squelette de votre projet sur Github est le suivant : https://classroom.github.com/a/oLZ7lmrU
+
 == La boutique
 
 Les dresseurs de Pokemon ont un portefeuille virtuel composé de Poké-Dollar 💰.
@@ -248,7 +250,7 @@ L'achat d'une PokeBall, SuperBall, HyperBall ou MasterBall a pour effet d'ajoute
 | Pokemons légendaires | 144 145 146 150 151
 |===
 
-Le lien pour créer le squelette de votre projet sur Github est le suivant : https://classroom.github.com/a/kLAwvePr
+Le lien pour créer le squelette de votre projet sur Github est le suivant : https://classroom.github.com/a/62kN71_Y
 
 La boutique doit :
 
