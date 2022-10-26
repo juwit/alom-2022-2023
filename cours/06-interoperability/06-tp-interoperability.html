@@ -905,9 +905,7 @@ Nous pouvons donc utiliser cet objet pour récupérer la langue demandée par la
 <span class="normal">42</span>
 <span class="normal">43</span>
 <span class="normal">44</span>
-<span class="normal">45</span>
-<span class="normal">46</span>
-<span class="normal">47</span></pre></div></td><td class="code"><pre><span></span><span class="tok-nd">@Test</span>
+<span class="normal">45</span></pre></div></td><td class="code"><pre><span></span><span class="tok-nd">@Test</span>
 <span class="tok-kt">void</span> <span class="tok-nf">pokemonNames_shouldBeTranslated_usingLocaleResolver</span><span class="tok-p">(){</span>
     <span class="tok-kd">var</span> <span class="tok-n">pokemonTypeService</span> <span class="tok-o">=</span> <span class="tok-k">new</span> <span class="tok-n">PokemonTypeServiceImpl</span><span class="tok-p">();</span>
 
@@ -923,7 +921,7 @@ Nous pouvons donc utiliser cet objet pour récupérer la langue demandée par la
 
     <span class="tok-kd">var</span> <span class="tok-n">pikachu</span> <span class="tok-o">=</span> <span class="tok-n">pokemonTypeService</span><span class="tok-p">.</span><span class="tok-na">getPokemonType</span><span class="tok-p">(</span><span class="tok-mi">25</span><span class="tok-p">);</span>
 
-    <span class="tok-n">assertEquals</span><span class="tok-p">(</span><span class="tok-s">&quot;Pikachu-FRENCH&quot;</span><span class="tok-p">,</span> <span class="tok-n">pikachu</span><span class="tok-p">.</span><span class="tok-na">getName</span><span class="tok-p">());</span>
+    <span class="tok-n">assertEquals</span><span class="tok-p">(</span><span class="tok-s">&quot;Pikachu-FRENCH&quot;</span><span class="tok-p">,</span> <span class="tok-n">pikachu</span><span class="tok-p">.</span><span class="tok-na">name</span><span class="tok-p">());</span>
     <span class="tok-n">verify</span><span class="tok-p">(</span><span class="tok-n">translationRepository</span><span class="tok-p">).</span><span class="tok-na">getPokemonName</span><span class="tok-p">(</span><span class="tok-mi">25</span><span class="tok-p">,</span> <span class="tok-n">Locale</span><span class="tok-p">.</span><span class="tok-na">FRENCH</span><span class="tok-p">);</span>
 <span class="tok-p">}</span>
 
@@ -934,10 +932,8 @@ Nous pouvons donc utiliser cet objet pour récupérer la langue demandée par la
     <span class="tok-kd">var</span> <span class="tok-n">pokemonTypeRepository</span> <span class="tok-o">=</span> <span class="tok-n">mock</span><span class="tok-p">(</span><span class="tok-n">PokemonTypeRepository</span><span class="tok-p">.</span><span class="tok-na">class</span><span class="tok-p">);</span>
     <span class="tok-n">pokemonTypeService</span><span class="tok-p">.</span><span class="tok-na">setPokemonTypeRepository</span><span class="tok-p">(</span><span class="tok-n">pokemonTypeRepository</span><span class="tok-p">);</span>
 
-    <span class="tok-kd">var</span> <span class="tok-n">pikachu</span> <span class="tok-o">=</span> <span class="tok-k">new</span> <span class="tok-n">PokemonType</span><span class="tok-p">();</span>
-    <span class="tok-n">pikachu</span><span class="tok-p">.</span><span class="tok-na">setId</span><span class="tok-p">(</span><span class="tok-mi">25</span><span class="tok-p">);</span>
-    <span class="tok-kd">var</span> <span class="tok-n">raichu</span> <span class="tok-o">=</span> <span class="tok-k">new</span> <span class="tok-n">PokemonType</span><span class="tok-p">();</span>
-    <span class="tok-n">raichu</span><span class="tok-p">.</span><span class="tok-na">setId</span><span class="tok-p">(</span><span class="tok-mi">26</span><span class="tok-p">);</span>
+    <span class="tok-kd">var</span> <span class="tok-n">pikachu</span> <span class="tok-o">=</span> <span class="tok-k">new</span> <span class="tok-n">PokemonType</span><span class="tok-p">(</span><span class="tok-mi">25</span><span class="tok-p">,</span> <span class="tok-kc">null</span><span class="tok-p">,</span> <span class="tok-kc">null</span><span class="tok-p">,</span> <span class="tok-kc">null</span><span class="tok-p">);</span>
+    <span class="tok-kd">var</span> <span class="tok-n">raichu</span> <span class="tok-o">=</span> <span class="tok-k">new</span> <span class="tok-n">PokemonType</span><span class="tok-p">(</span><span class="tok-mi">26</span><span class="tok-p">,</span> <span class="tok-kc">null</span><span class="tok-p">,</span> <span class="tok-kc">null</span><span class="tok-p">,</span> <span class="tok-kc">null</span><span class="tok-p">);</span>
     <span class="tok-n">when</span><span class="tok-p">(</span><span class="tok-n">pokemonTypeRepository</span><span class="tok-p">.</span><span class="tok-na">findAllPokemonType</span><span class="tok-p">()).</span><span class="tok-na">thenReturn</span><span class="tok-p">(</span><span class="tok-n">List</span><span class="tok-p">.</span><span class="tok-na">of</span><span class="tok-p">(</span><span class="tok-n">pikachu</span><span class="tok-p">,</span> <span class="tok-n">raichu</span><span class="tok-p">));</span>
 
     <span class="tok-kd">var</span> <span class="tok-n">translationRepository</span> <span class="tok-o">=</span> <span class="tok-n">mock</span><span class="tok-p">(</span><span class="tok-n">TranslationRepository</span><span class="tok-p">.</span><span class="tok-na">class</span><span class="tok-p">);</span>
@@ -949,8 +945,8 @@ Nous pouvons donc utiliser cet objet pour récupérer la langue demandée par la
 
     <span class="tok-kd">var</span> <span class="tok-n">pokemonTypes</span> <span class="tok-o">=</span> <span class="tok-n">pokemonTypeService</span><span class="tok-p">.</span><span class="tok-na">getAllPokemonTypes</span><span class="tok-p">();</span>
 
-    <span class="tok-n">assertEquals</span><span class="tok-p">(</span><span class="tok-s">&quot;Pikachu-FRENCH&quot;</span><span class="tok-p">,</span> <span class="tok-n">pokemonTypes</span><span class="tok-p">.</span><span class="tok-na">get</span><span class="tok-p">(</span><span class="tok-mi">0</span><span class="tok-p">).</span><span class="tok-na">getName</span><span class="tok-p">());</span>
-    <span class="tok-n">assertEquals</span><span class="tok-p">(</span><span class="tok-s">&quot;Raichu-FRENCH&quot;</span><span class="tok-p">,</span> <span class="tok-n">pokemonTypes</span><span class="tok-p">.</span><span class="tok-na">get</span><span class="tok-p">(</span><span class="tok-mi">1</span><span class="tok-p">).</span><span class="tok-na">getName</span><span class="tok-p">());</span>
+    <span class="tok-n">assertEquals</span><span class="tok-p">(</span><span class="tok-s">&quot;Pikachu-FRENCH&quot;</span><span class="tok-p">,</span> <span class="tok-n">pokemonTypes</span><span class="tok-p">.</span><span class="tok-na">get</span><span class="tok-p">(</span><span class="tok-mi">0</span><span class="tok-p">).</span><span class="tok-na">name</span><span class="tok-p">());</span>
+    <span class="tok-n">assertEquals</span><span class="tok-p">(</span><span class="tok-s">&quot;Raichu-FRENCH&quot;</span><span class="tok-p">,</span> <span class="tok-n">pokemonTypes</span><span class="tok-p">.</span><span class="tok-na">get</span><span class="tok-p">(</span><span class="tok-mi">1</span><span class="tok-p">).</span><span class="tok-na">name</span><span class="tok-p">());</span>
     <span class="tok-n">verify</span><span class="tok-p">(</span><span class="tok-n">translationRepository</span><span class="tok-p">).</span><span class="tok-na">getPokemonName</span><span class="tok-p">(</span><span class="tok-mi">25</span><span class="tok-p">,</span> <span class="tok-n">Locale</span><span class="tok-p">.</span><span class="tok-na">FRENCH</span><span class="tok-p">);</span>
     <span class="tok-n">verify</span><span class="tok-p">(</span><span class="tok-n">translationRepository</span><span class="tok-p">).</span><span class="tok-na">getPokemonName</span><span class="tok-p">(</span><span class="tok-mi">26</span><span class="tok-p">,</span> <span class="tok-n">Locale</span><span class="tok-p">.</span><span class="tok-na">FRENCH</span><span class="tok-p">);</span>
 <span class="tok-p">}</span>
@@ -994,8 +990,8 @@ Nous pouvons donc utiliser cet objet pour récupérer la langue demandée par la
 <span class="tok-kt">void</span> <span class="tok-nf">getPokemon_withId1_shouldReturnBulbasaur</span><span class="tok-p">()</span> <span class="tok-p">{</span>
     <span class="tok-kd">var</span> <span class="tok-n">bulbasaur</span> <span class="tok-o">=</span> <span class="tok-k">this</span><span class="tok-p">.</span><span class="tok-na">restTemplate</span><span class="tok-p">.</span><span class="tok-na">getForObject</span><span class="tok-p">(</span><span class="tok-s">&quot;http://localhost:&quot;</span> <span class="tok-o">+</span> <span class="tok-n">port</span> <span class="tok-o">+</span> <span class="tok-s">&quot;/pokemon-types/1&quot;</span><span class="tok-p">,</span> <span class="tok-n">PokemonType</span><span class="tok-p">.</span><span class="tok-na">class</span><span class="tok-p">);</span>
     <span class="tok-n">assertNotNull</span><span class="tok-p">(</span><span class="tok-n">bulbasaur</span><span class="tok-p">);</span>
-    <span class="tok-n">assertEquals</span><span class="tok-p">(</span><span class="tok-mi">1</span><span class="tok-p">,</span> <span class="tok-n">bulbasaur</span><span class="tok-p">.</span><span class="tok-na">getId</span><span class="tok-p">());</span>
-    <span class="tok-n">assertEquals</span><span class="tok-p">(</span><span class="tok-s">&quot;Bulbasaur&quot;</span><span class="tok-p">,</span> <span class="tok-n">bulbasaur</span><span class="tok-p">.</span><span class="tok-na">getName</span><span class="tok-p">());</span> <i class="conum" data-value="1"></i><b>(1)</b>
+    <span class="tok-n">assertEquals</span><span class="tok-p">(</span><span class="tok-mi">1</span><span class="tok-p">,</span> <span class="tok-n">bulbasaur</span><span class="tok-p">.</span><span class="tok-na">id</span><span class="tok-p">());</span>
+    <span class="tok-n">assertEquals</span><span class="tok-p">(</span><span class="tok-s">&quot;Bulbasaur&quot;</span><span class="tok-p">,</span> <span class="tok-n">bulbasaur</span><span class="tok-p">.</span><span class="tok-na">name</span><span class="tok-p">());</span> <i class="conum" data-value="1"></i><b>(1)</b>
 <span class="tok-p">}</span>
 
 <span class="tok-nd">@Test</span>
@@ -1009,8 +1005,8 @@ Nous pouvons donc utiliser cet objet pour récupérer la langue demandée par la
     <span class="tok-kd">var</span> <span class="tok-n">bulbizarre</span> <span class="tok-o">=</span> <span class="tok-n">bulbizarreResponseEntity</span><span class="tok-p">.</span><span class="tok-na">getBody</span><span class="tok-p">();</span>
 
     <span class="tok-n">assertNotNull</span><span class="tok-p">(</span><span class="tok-n">bulbizarre</span><span class="tok-p">);</span>
-    <span class="tok-n">assertEquals</span><span class="tok-p">(</span><span class="tok-mi">1</span><span class="tok-p">,</span> <span class="tok-n">bulbizarre</span><span class="tok-p">.</span><span class="tok-na">getId</span><span class="tok-p">());</span>
-    <span class="tok-n">assertEquals</span><span class="tok-p">(</span><span class="tok-s">&quot;Bulbizarre&quot;</span><span class="tok-p">,</span> <span class="tok-n">bulbizarre</span><span class="tok-p">.</span><span class="tok-na">getName</span><span class="tok-p">());</span> <i class="conum" data-value="3"></i><b>(3)</b>
+    <span class="tok-n">assertEquals</span><span class="tok-p">(</span><span class="tok-mi">1</span><span class="tok-p">,</span> <span class="tok-n">bulbizarre</span><span class="tok-p">.</span><span class="tok-na">id</span><span class="tok-p">());</span>
+    <span class="tok-n">assertEquals</span><span class="tok-p">(</span><span class="tok-s">&quot;Bulbizarre&quot;</span><span class="tok-p">,</span> <span class="tok-n">bulbizarre</span><span class="tok-p">.</span><span class="tok-na">name</span><span class="tok-p">());</span> <i class="conum" data-value="3"></i><b>(3)</b>
 <span class="tok-p">}</span>
 </pre></td></tr></table></code></pre>
 </div>
@@ -1239,7 +1235,7 @@ De cette manière, la langue utilisée lors des échanges sera celle du navigate
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-10-21 09:38:04 +0200
+Last updated 2022-10-26 10:39:56 +0200
 </div>
 </div>
 </body>
