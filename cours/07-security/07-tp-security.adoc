@@ -134,7 +134,6 @@ Pour impacter votre test d'intégration, vous devez donc :
 [source,java,linenums]
 .TrainerControllerIntegrationTest.java
 ----
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class TrainerControllerIntegrationTest {
 
