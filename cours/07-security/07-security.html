@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+
+    <title>ALOM - Security</title>
+
+    <meta name="description" content="ALOM - Security">
+    <meta name="author" content="Julien WITTOUCK <julien@codeka.io>">
+
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+    <link rel="stylesheet" href="../reveal/dist/reveal.css">
+    <link rel="stylesheet" href="../reveal/dist/theme/white.css" id="theme">
+
+    <link rel="stylesheet" href="../css/miage-lille.css"/>
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+          integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+</head>
+
+<body>
+
+<div class="reveal">
+
+    <div class="slides">
+        <section>
+            <h1>ALOM</h1>
+            <h2>🔒 Security</h2>
+        </section>
+
+        <section>
+            <h3><i class="fab fa-uber"></i> UBER</h3>
+            <img src="images/Microservice-Architecture-Of-UBER.png" style="width: 50%"/>
+        </section>
+
+        <section>
+            <h2>🤔 Problématiques : </h2>
+            <ul>
+                <li>Comment sécuriser les données ?</li>
+                <li>Comment authentifier les utilisateurs ?</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>🎚️ Niveaux de sécurité</h2>
+            <ul>
+                <li>Physique : Contrôle d'accès, biométrie</li>
+                <li>Hardware : Encryption des disques</li>
+                <li>Middleware : Firewalls (blocage d'IP/Ports), VPN (réseaux privés virtuels)</li>
+                <li>Software : Authentification/Autorisation</li>
+                <li>Data : Hashage / Chiffrement</li>
+            </ul>
+        </section>
+
+        <section>
+            <section>
+                <h2>HTTPS</h2>
+                <p>HTTPS fournit un tunnel de communications sécurisé</p>
+                <p>Encryption des données via un algorithme asymétrique</p>
+                <p>Certificat validant l'identité du site + clé publique</p>
+            </section>
+            <section>
+                <h2>HTTPS</h2>
+                <img src="images/https.png"/>
+            </section>
+            <section>
+                <h2>⚠️ HTTPS</h2>
+                <ul>
+                    <li>Chiffre les données entre le client et le serveur</li>
+                    <li>Ne permet pas de valider l'identité de l'utilisateur</li>
+                </ul>
+            </section>
+        </section>
+
+
+        <section>
+            <h2>Software Security</h2>
+            <ul>
+                <li>Authentication (authentification)</li>
+                <li>Authorization (autorisation)</li>
+            </ul>
+        </section>
+        <section>
+            <h4>Authentication</h4>
+            <p><i class="far fa-user fa-2x"></i> <i class="far fa-id-card fa-2x"></i></p>
+            <p>Vérification de l'identité d'un "principal" (un user, un device, un système qui veut effectuer une
+                action)</p>
+        </section>
+        <section>
+            <h4>Authorization</h4>
+            <p><i class="fas fa-unlock-alt fa-2x"></i> <i class="fas fa-check fa-2x"></i></p>
+            <p>Décider si un "principal" peut faire une action en particulier. (contrôle d'accès)</p>
+        </section>
+
+        <section>
+            <h4>Authentification en HTTP</h4>
+            <p>Utilisation du header </p>
+            <p><code>Authorization: &lt;type&gt; &lt;credentials&gt;</code></p>
+            <p><code>Authorization: Basic QXNoOnBhc3N3b3Jk</code></p>
+            <p><code>Authorization: Bearer QXNoOnBhc3N3b3Jk</code></p>
+        </section>
+
+        <section>
+            <h4>Authentification en HTTP</h4>
+            <p><code>Authorization: Basic QXNoOnBhc3N3b3Jk</code></p>
+            <p>Les logins/mots de passe (ou tokens) transitent dans les headers</p>
+            <p>C'est pour ça que l'on doit utiliser HTTPS !</p>
+        </section>
+
+        <section>
+            <h4>En servlets</h4>
+            <p>Utilisation des servlet filters</p>
+            <img src="images/servlet-filters.png"/>
+        </section>
+
+        <section>
+            <h4>En <img src="images/spring-by-pivotal.png" style="height: 1.5em; vertical-align: middle;"></h4>
+            <h5>spring-security</h5>
+            <ul>
+                <li>Authentification (validation des credentials)</li>
+                <li>Utilisation d'un Cookie HTTP pour identifiant de session</li>
+                <li>Stockage de "principal" en session côté serveur</li>
+                <li>Logout : suppression de la session</li>
+                <li>Protection contre le vol de session (CSRF & Session Fixation)</li>
+                <li>Protection contre les appels venant de sources inconnues (CORS)</li>
+            </ul>
+        </section>
+
+        <section data-markdown>
+            <textarea data-template>
+                #### spring-security
+
+                ```xml
+                <dependency>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-security</artifactId>
+                </dependency>
+                ```
+
+
+                Le simple fait d'ajouter spring security au classpath sécurise toutes les routes d'une application et
+                ajoute une page de login par défaut.
+
+                ---
+
+                #### spring-security
+
+                La classe `WebSecurityConfigurerAdapter` permet de configurer les règles de sécurité:
+
+                * routes à protéger
+                * écran de login
+
+                ```java
+@Configuration
+@EnableWebSecurity
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+}
+                ```
+
+                ---
+
+                #### spring-security
+
+                ```java
+@Override
+protected void configure(HttpSecurity http) throws Exception {
+    http
+        .authorizeRequests()
+            .antMatchers("/", "/icons/**", "/images/**").permitAll()
+            .anyRequest().authenticated()
+        .and()
+        .formLogin()
+            .loginPage("/login")
+            .permitAll()
+        .and()
+        .logout()
+            .permitAll();
+}
+                ```
+
+                ---
+
+                #### spring-security
+
+                Récupération des utilisateurs via un `UserDetailsService`.
+                Par défaut, un `UserDetailsService` *in-memory* est créé à partir des properties:
+                * `spring.security.user.name`
+                * `spring.security.user.password`
+                * `spring.security.user.roles`
+
+                ---
+                #### spring-security
+
+                Configuration d'un `UserDetailsService` avec un Bean Spring.
+                Un `UserDetailsService` doit retourner des `UserDetails`.
+
+                ```java
+@Autowired
+private TrainerService trainerService;
+
+@Bean
+@Override
+public UserDetailsService userDetailsService() {
+    return username -> Optional.ofNullable(trainerService.getTrainer(username))
+            .orElseThrow(() -> new BadCredentialsException("No such user"));
+}
+                ```
+            </textarea>
+        </section>
+
+        <section>
+            <h4>spring-security</h4>
+            <p>Page de login</p>
+            <img src="carbon/login.png"/>
+        </section>
+
+        <section data-markdown>
+            <textarea data-template>
+                #### spring-security
+                Accès à l'utilisateur loggué.
+
+                Injection du `Principal`
+
+                ```java
+                @GetMapping("/otherTrainers")
+                public Iterable<Trainers> getOtherTrainers(Principal principal) {
+                    return trainerRepository.findOtherTrainers(principal.getName());
+                }
+                ```
+
+                `SecurityContextHolder`
+
+                ```java
+                @GetMapping("/otherTrainers")
+                public Iterable<Trainers> getOtherTrainers() {
+                    var auth = SecurityContextHolder.getContext().getAuthentication();
+                    var principal = (Principal) auth.getPrincipal();
+                    return trainerRepository.findOtherTrainers(principal.getName());
+                }
+                ```
+            </textarea>
+        </section>
+
+        <section>
+            <h4>spring-security</h4>
+            <p>Sécurisation des services REST par défaut</p>
+            <ul>
+                <li>Username : <code>user</code></li>
+                <li>Password : loggué sur la console</li>
+            </ul>
+            <code>Using generated security password: 112eb169-1567-42fe-bf0e-7c7bc94a5afa</code>
+        </section>
+
+        <section>
+            <h4>spring-security</h4>
+            <p>Personalisation de la sécurisation des services REST</p>
+            <ul>
+                <li>Username : <code>spring.security.user.name</code></li>
+                <li>Password : <code>spring.security.user.password</code></li>
+            </ul>
+        </section>
+
+        <section data-markdown>
+            <textarea data-template>
+                #### spring-security
+
+                Sécurisation des méthodes par annotations sur les méthodes de Controlleur.
+
+                ```java
+                @Secured("ROLE_VIEWER")
+                ```
+                ```java
+                @Secured("ROLE_ADMIN")
+                ```
+
+                Configuration
+                ```java
+                @Configuration
+                @EnableGlobalMethodSecurity(securedEnabled = true)
+                public class MethodSecurityConfig extends GlobalMethodSecurityConfiguration {
+                }
+                ```
+            </textarea>
+        </section>
+
+        <section data-markdown>
+            <textarea data-template>
+                #### Recommandation générales
+                *Kids, don't do this at home*
+
+                * Ne stockez **JAMAIS** de mot de passe en clair
+                * Ne faites **JAMAIS** de concaténation de chaînes pour générer des requêtes SQL
+                * Évitez de stocker des *secrets* dans des properties (utilisez des variables d'environnement)
+                * Utilisez du HTTPS et du TLS dès que possible
+                * Sécurisez vos routes HTTP
+                * Chiffrez les données en base si les données sont sensibles
+            </textarea>
+        </section>
+
+        <section>
+            <h2>TP</h2>
+            <img src="../images/leonidas.png"/>
+            <p>
+                <a href="./07-tp-security.html">Security 🔒</a>
+            </p>
+        </section>
+
+    </div>
+
+</div>
+
+<script src="../reveal/dist/reveal.js"></script>
+<script src="../reveal/plugin/markdown/markdown.js"></script>
+<link rel="stylesheet" href="../reveal/plugin/highlight/zenburn.css">
+<script src="../reveal/plugin/highlight/highlight.js"></script>
+<script>
+    // More info about initialization & config:
+    // - https://revealjs.com/initialization/
+    // - https://revealjs.com/config/
+    Reveal.initialize({
+        hash: true,
+
+        // Learn about plugins: https://revealjs.com/plugins/
+        plugins: [RevealMarkdown, RevealHighlight],
+        markdown: {
+            smartypants: true
+        }
+    });
+</script>
+
+<aside class="miage_aside_logo"></aside>
+
+</body>
+</html>
