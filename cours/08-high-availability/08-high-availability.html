@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+
+    <title>ALOM - High Availability</title>
+
+    <meta name="description" content="ALOM - High Availability">
+    <meta name="author" content="Julien WITTOUCK <julien@codeka.io>">
+
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+    <link rel="stylesheet" href="../reveal/dist/reveal.css">
+    <link rel="stylesheet" href="../reveal/dist/theme/white.css" id="theme">
+
+    <link rel="stylesheet" href="../css/miage-lille.css"/>
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+          integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+</head>
+
+<body>
+
+<div class="reveal">
+
+    <div class="slides">
+        <section>
+            <h1>ALOM</h1>
+            <h2>🦄 High Availability & Micro-Services patterns</h2>
+        </section>
+
+        <section>
+            <h3><i class="fab fa-uber"></i> UBER</h3>
+            <img src="images/Microservice-Architecture-Of-UBER.png" style="width: 50%"/>
+        </section>
+
+        <section>
+            <h2>Problématiques : </h2>
+            <p>Comment absorber la charge ?</p>
+            <p>Que faire si un micro-service ne répond pas ?</p>
+            <p>Comment limiter la charge ?</p>
+        </section>
+
+        <section>
+            <h2>💡 Trouver le point de rupture d'un micro-service</h2>
+            <p>Faire un test de charge</p>
+            <ul>
+                <li>JMeter</li>
+                <li>Gatling</li>
+            </ul>
+        </section>
+
+        <section>
+            <h3>Patterns d'architecture</h3>
+            <h4>Load-Balancing</h4>
+            <p>Répartition de charge sur plusieurs serveurs</p>
+            <img src="images/load-balancer.png"/>
+        </section>
+
+        <section>
+            <h4>Load-Balancing</h4>
+            <p>Plusieurs techniques :</p>
+            <ul>
+                <li>DNS load-balancing</li>
+                <li>Reverse-proxy load-balancing</li>
+                <li>Client-side load-balancing</li>
+            </ul>
+            <p>Plusieurs stratégies</p>
+            <ul>
+                <li>round-robin</li>
+                <li>least-connection</li>
+                <li>ip-hash</li>
+                <li>cookie</li>
+            </ul>
+        </section>
+
+        <section>
+            <h4>DNS load-balancing (round-robin)</h4>
+            <img src="carbon/dns.png" style="width: 50%;"/>
+            <p>Le serveur DNS répondra séquentiellement chaque adresse IP</p>
+            <p>⚠️ Les services doivent être "stateless" !</p>
+        </section>
+
+        <section>
+            <h4>reverse-proxy load-balancing</h4>
+            <p>un serveur intermédiaire qui fait le travail (Apache httpd, HAProxy, Nginx...)</p>
+            <img src="carbon/nginx.png" style="width: 50%;"/>
+        </section>
+
+        <section>
+            <h4>reverse-proxy load-balancing</h4>
+            <p>ℹ️ Les services peuvent être "statefull" en <code>ip-hash</code>!</p>
+            <img src="carbon/nginx.png" style="width: 50%;"/>
+        </section>
+
+        <section>
+            <h4>client-side load-balancing</h4>
+            <img src="images/client-side.png" style="width: 50%;"/>
+        </section>
+
+        <section>
+            <h4>client-side load-balancing</h4>
+            <p>Le client (micro-service java) récupère la liste de toutes les adresses d'un service</p>
+            <p>Il se charge de répartir les appels</p>
+            <p>Nécessite un <code>service-registry</code></p>
+        </section>
+
+        <section>
+            <h4>Cache</h4>
+            <p>Mettre en cache des objets :</p>
+            <ul>
+                <li>Améliore les temps de réponse</li>
+                <li>Limite les appels aux systèmes sous-jacents</li>
+            </ul>
+            <p>⚠️ La mise en cache est facile. Supprimer des objets en cache est à réfléchir!</p>
+        </section>
+
+        <section>
+            <h4>Cache</h4>
+            <p>Types de cache</p>
+            <ul>
+                <li>Local : en mémoire ou sur le disque (une Map !, EhCache, ...)</li>
+                <li>Distribué : un service dédié (Redis, Hazelcast, ...)</li>
+            </ul>
+            <p>Le cache local est toujours plus performant, le cache distribué est partagé entre toutes les instances
+                d'un service, mais nécessite un appel réseau !</p>
+        </section>
+
+        <section>
+            <h4>ℹ️ Cache distribué</h4>
+            <p>Un cache distribué peut permettre de gérer une session utilisateur dans un système stateless !</p>
+            <p>La session est stocké en cache, et non plus en mémoire, elle peut être disponible sur l'ensemble des
+                instances de notre application !</p>
+        </section>
+
+        <section>
+            <h4>Supprimer des objets du cache</h4>
+            <p>Le cache est pratique pour les données "référentielles"</p>
+            <p>Pour les données "vivantes", prévoir une éviction du cache quand l'objet est modifié</p>
+            <p>Notion d'expiration ou <code>TTL</code>
+            </p>
+        </section>
+
+        <section>
+            <h2>Cache Vs The cost of I/O : </h2>
+            <table>
+                <thead>
+                <th>Action</th>
+                <th>Latency</th>
+                <th># of cycles</th>
+                <th>Human Time</th>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>1 Cycle CPU (3GHz Clock)</td>
+                    <td>0.3 ns</td>
+                    <td>1</td>
+                    <td>1 s</td>
+                </tr>
+                <tr>
+                    <td>RAM access</td>
+                    <td>70 - 100 ns</td>
+                    <td>233 - 333</td>
+                    <td>3.5 - 5.5 m</td>
+                </tr>
+                <tr>
+                    <td>NVMe SSD</td>
+                    <td>7 - 150 µs</td>
+                    <td>23k - 500k</td>
+                    <td>6.5 h - 5.5 d</td>
+                </tr>
+                <tr>
+                    <td>Internet: SF to NYC</td>
+                    <td>40 ms</td>
+                    <td>130 M</td>
+                    <td>4.2 years</td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>Résilience</h2>
+            <p>Capacité d'un système à surmonter une altération de son environnement</p>
+        </section>
+
+        <section>
+            <h4>En micro-services</h4>
+            <p>Que faire si le micro-service auquel j'ai envoyé une requête n'est pas disponible ?</p>
+            <ul>
+                <li>500 Internal Server Error</li>
+                <li>java.io.IOException: Connection reset by peer</li>
+                <li>java.net.ConnectException: Connection refused</li>
+            </ul>
+            <p>🔃 Retry !</p>
+        </section>
+
+        <section>
+            <p>🔃 Retry !</p>
+            <p>Avec un peu de chance, le micro-service sera dispo quelques milli-secondes après cette erreur.</p>
+            <p>Si le micro-service est derrière un load-balancer, le load-balancer va désactiver le routage vers
+                l'instance en erreur.</p>
+            <p>Permet de compenser des erreurs temporaires</p>
+        </section>
+
+        <section>
+            <h4>java.io.IOException: Connection timed out</h4>
+            <p>Notre service a passé du temps à attendre une réponse qu'il n'a pas eu.</p>
+            <p>Il est probable que les appels suivants auront le même problème</p>
+        </section>
+
+        <section>
+            <h4>Circuit-Breaker</h4>
+            <p>On "ouvre" le circuit si on a rencontré plusieurs erreurs/timeout</p>
+            <p><code>fail-fast</code></p>
+            <p>On peut fournir un mode-dégradé</p>
+            <p>On refermera le circuit petit à petit si tout se passe bien</p>
+        </section>
+
+        <section>
+            <h4>Circuit-Breaker</h4>
+            <img src="images/circuit-breaker.png" style="width: 50%;"/>
+        </section>
+
+        <section>
+            <h4>Implémentations avec Spring / Spring-boot</h4>
+            <ul>
+                <li>Cache</li>
+                <li>Retry</li>
+            </ul>
+        </section>
+
+        <section>
+            <h4>Cache <small>(spring-boot-starter-cache)</small></h4>
+            <ul>
+                <li><code>@EnableCaching</code> active la gestion du cache (création d'un <code>CacheManager</code>)
+                </li>
+                <li><code>@Cacheable("&lt;cache-name&gt;")</code> active le cache sur une méthode</li>
+            </ul>
+            <p>Si pas de librairie de cache dans le classpath, Spring utilisera une <code>ConcurrentHashMap</code></p>
+            <p>Librairies (Cache providers): EhCache, Redis</p>
+            <p>Il est possible de recevoir le <code>CacheManager</code> en injection de dépendances pour manipuler
+                directement le cache</p>
+        </section>
+
+        <section>
+            <h4>@EnableCaching</h4>
+            <img src="carbon/CacheConfiguration.png"/>
+        </section>
+
+        <section>
+            <h4>@Cacheable</h4>
+            <img src="carbon/Cacheable.png"/>
+        </section>
+
+        <section>
+            <h4>Retry <small>spring-retry</small></h4>
+            <ul>
+                <li><code>@EnableRetry</code> active la gestion du retry</li>
+                <li><code>@Retryable</code> active le retry sur une méthode à chaque exception ! (3 tentatives par
+                    défaut)
+                </li>
+            </ul>
+        </section>
+
+        <section>
+            <h4>spring-retry</h4>
+            <img src="carbon/spring-retry.png"/>
+        </section>
+
+        <section>
+            <h4>@EnableRetry</h4>
+            <img src="carbon/RetryConfiguration.png"/>
+        </section>
+
+        <section>
+            <h4>@Retryable</h4>
+            <img src="carbon/Retryable.png"/>
+        </section>
+
+        <section>
+            <h2>TP</h2>
+            <img src="../images/leonidas.png"/>
+            <p>
+                <a href="./08-tp-high-availability.html">High-Availability 🦄</a>
+            </p>
+        </section>
+
+    </div>
+
+</div>
+
+<script src="../reveal/dist/reveal.js"></script>
+<script src="../reveal/plugin/markdown/markdown.js"></script>
+<link rel="stylesheet" href="../reveal/plugin/highlight/zenburn.css">
+<script src="../reveal/plugin/highlight/highlight.js"></script>
+<script>
+    // More info about initialization & config:
+    // - https://revealjs.com/initialization/
+    // - https://revealjs.com/config/
+    Reveal.initialize({
+        hash: true,
+
+        // Learn about plugins: https://revealjs.com/plugins/
+        plugins: [RevealMarkdown, RevealHighlight],
+        markdown: {
+            smartypants: true
+        }
+    });
+</script>
+
+<aside class="miage_aside_logo"></aside>
+
+</body>
+</html>
