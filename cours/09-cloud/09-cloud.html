@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+
+    <title>ALOM - Cloud</title>
+
+    <meta name="description" content="ALOM - High Availability">
+    <meta name="author" content="Julien WITTOUCK <julien@codeka.io>">
+
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+    <link rel="stylesheet" href="../reveal/dist/reveal.css">
+    <link rel="stylesheet" href="../reveal/dist/theme/white.css" id="theme">
+
+    <link rel="stylesheet" href="../css/miage-lille.css"/>
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+          integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+</head>
+
+<body>
+
+<div class="reveal">
+
+    <div class="slides">
+        <section>
+            <h1>ALOM</h1>
+            <h2><i class="em em-cloud"></i> Patterns orientés cloud</h2>
+        </section>
+
+        <section>
+            <h3><i class="fab fa-uber"></i> UBER</h3>
+            <img src="images/Microservice-Architecture-Of-UBER.png" style="width: 50%"/>
+        </section>
+
+        <section>
+            <h2>Problématiques : </h2>
+            <p>Comment déployer les services ?</p>
+            <p>Comment gérer la configuration des services ?</p>
+            <p>Comment analyser l'enchaînement des appels ?</p>
+            <p>Comment connaître l'état de l'application ?</p>
+        </section>
+
+        <!-- cloud -->
+        <section>
+            <h2>Cloud "as a service"</h2>
+            <ul>
+                <li>IaaS : Infrastructure as a Service</li>
+                <li>PaaS : Platform as a Service</li>
+                <li>SaaS : Software as a Service</li>
+            </ul>
+            <img src="images/iaas--paas-saas-diagram.png">
+        </section>
+        <section>
+            <h2>Cloud 🇫🇷</h2>
+            <ul>
+                <li>
+                    IaaS : VM, Disks, Load-Balancers
+                    <ul>
+                        <li>OVH Cloud</li>
+                        <li>Scaleway</li>
+                        <li>nua.ge</li>
+                        <li>hopla.cloud</li>
+                        <li>Outscale</li>
+                    </ul>
+                </li>
+                <li>
+                    PaaS : Database, Middleware, Object Storage, Runtime Java / Container, Functions
+                    <ul>
+                        <li>OVH : Databases & k8s, Object Storage</li>
+                        <li>Scaleway: Databases & k8s, Object Storage, Serverless Functions</li>
+                        <li>Clever-Cloud: PaaS, Databases, Object Storage</li>
+                        <li>Scalingo: PaaS, Databases</li>
+                    </ul>
+                </li>
+            </ul>
+        </section>
+        <section>
+            <h2>Cloud 🇺🇲</h2>
+            <ul>
+                <li>
+                    IaaS : VM, Disks, Load-Balancers
+                    <ul>
+                        <li>AWS EC2</li>
+                        <li>GCP GCE</li>
+                        <li>Azure VM</li>
+                    </ul>
+                </li>
+                <li>
+                    PaaS : Database, Middleware, Object Storage, Runtime Java / Container, Functions
+                    <ul>
+                        <li>AWS : RDS Databases, EKS, S3 Object Storage, AWS Lambdas</li>
+                        <li>GCP Cloud SQL, GKE, GCS Object Storage, Cloud Functions, App Engine, Pub/Sub</li>
+                        <li>Azure SQL Database, AKS, Azure Blob Storage, Azure Functions</li>
+                    </ul>
+                </li>
+            </ul>
+        </section>
+        <section>
+            <h2>Une architecture Cloud</h2>
+            <p>Une application Java dans un assemblage de services Cloud</p>
+            <img src="images/second-hand.png"/>
+        </section>
+        <section>
+            <h2>Une architecture Cloud</h2>
+            <ul>
+                <li>DNS (Route53)</li>
+                <li>Load Balancers (ALB)</li>
+                <li>VM (EC2) ⬅️ notre code est ici</li>
+                <li>Base de données managée (PostgreSQL)</li>
+                <li>Cache managé (ElasticSearch)</li>
+                <li>CDN (CloudFront)</li>
+                <li>Stockage objet (S3)</li>
+                <li>Messaging (SQS)</li>
+                <li>Mailing (SES)</li>
+            </ul>
+        </section>
+
+        <!-- configuration -->
+        <section>
+            <h3>Patterns d'architecture</h3>
+            <h4>Configuration externalisée</h4>
+        </section>
+        <section>
+            <h4>Configuration externalisée</h4>
+            <p>Permet d'exécuter un service dans multiples environnements sans modifications</p>
+            <ul>
+                <li>Accès BDD</li>
+                <li>Gestion sécurité</li>
+                <li>etc...</li>
+            </ul>
+            <p>Plusieurs stratégies</p>
+            <ul>
+                <li>Profiles : un fichier de configuration par profil</li>
+                <li>Variables d'environnement</li>
+            </ul>
+        </section>
+        <section>
+            <h4>Configuration externalisée</h4>
+            <p>Profils</p>
+            <ul>
+                <li>Activation par la properties <code>spring.profiles.active</code></li>
+                <li>ou variable d'environnement <code>SPRING_PROFILES_ACTIVE</code></li>
+            </ul>
+            <p>Permet de charger un fichier <code>application-{profile}.properties</code> en plus du <code>application.properties</code>.
+            </p>
+            <p>Exemples: <code>application-local.properties</code> et <code>application-prod.properties</code> contenant
+                des ports/connexions BDD différentes.</p>
+        </section>
+        <section>
+            <h4>Configuration externalisée chez Spring</h4>
+            <p>Variables d'environnement</p>
+            <p>Toutes les properties Spring peuvent être surchargées par des variables d'environnement</p>
+            <ul>
+                <li>Les <code>.</code> sont remplacés par des <code>_</code>.</li>
+                <li>Tout est mis en majuscule</li>
+                <li>Le camel-case est convertit en <code>_</code></li>
+            </ul>
+        </section>
+        <section>
+            <h4>Configuration externalisée chez Spring</h4>
+            <p>Variables d'environnement</p>
+            <p>Exemples: </p>
+            <ul>
+                <li><code>server.port=8080</code> ➡️ <code>SERVER_PORT=8080</code></li>
+                <li><code>trainer.service.username=vegeta</code> ➡️ <code>TRAINER_SERVICE_USERNAME=vegeta</code></li>
+                <li><code>trainer.serviceUrl=https://someurl:8080</code> ➡️ <code>TRAINER_SERVICE_URL=https://someurl:8080</code>
+                </li>
+            </ul>
+
+        </section>
+
+        <section>
+            <h4>Configuration externalisée chez Spring</h4>
+            <p>Interpolation de properties</p>
+            <p>Il est possible dans des properties d'en utiliser d'autres</p>
+            <ul>
+                <li><code>trainer.service.host=someHost</code></li>
+                <li><code>trainer.service.port=8080</code></li>
+                <li><code>trainer.service.url=
+                    https://${trainer.service.host}:${trainer.service.port}</code></li>
+            </ul>
+
+        </section>
+
+        <!-- centralisation de logs -->
+        <section>
+            <h3>Patterns d'architecture</h3>
+            <h4>Centralisation des logs et correlation</h4>
+        </section>
+        <section>
+            <h4>Centralisation des logs</h4>
+            <p>Dans un environnement load-balancé, les requêtes d'un utilisateur peuvent être traitées par n'importe
+                quel serveur.</p>
+            <p>Dans un environnement cloud, on ne peut pas forcément accéder aux machines pour consulter les fichiers de
+                log.</p>
+            <p>Dans un environnement conteneurisé, on ne peut pas forcément accéder aux logs des containers
+                (kubernetes...)</p>
+        </section>
+        <section>
+            <h4>Centralisation des logs</h4>
+            <p>On envoie tous les logs dans un service dédié</p>
+            <ul>
+                <li>un service lit les fichiers de log et envoie les lignes au serveur</li>
+                <li>les logs sont indexés et conservés</li>
+                <li>une IHM permet de les consulter</li>
+            </ul>
+        </section>
+        <section>
+            <h4>Centralisation des logs</h4>
+            <img src="images/elk.png"/>
+        </section>
+        <section>
+            <h4>Centralisation des logs</h4>
+            <p>Produit connus :</p>
+            <p>Stack "ELK"</p>
+            <ul>
+                <li>Elasticsearch : indexation des logs, et recherche "full-text"</li>
+                <li>Logstash : Parsing des fichiers de logs, et envoi à Elasticsearch</li>
+                <li>Kibana : IHM de consultation d'Elasticsearch : recherche, dashboards...</li>
+            </ul>
+        </section>
+        <section>
+            <h4>Correlation des logs</h4>
+            <p>Observer la séquencialité des appels</p>
+            <p>Observer les logs d'un même utilisateur</p>
+            <p>Trouver des points de contention</p>
+            <p>Aide au debugging</p>
+        </section>
+        <section>
+            <h4>Correlation des logs</h4>
+            <p>Correlation des appels via des Headers HTTP</p>
+            <p>Création d'un id pour chaque requête reçue</p>
+            <p>Transmission de l'id à chaque requête envoyée</p>
+            <p>Envoi des traces à un outil centralisé</p>
+        </section>
+        <section>
+            <h4>Correlation des logs</h4>
+            <p><a href="https://spring.io/projects/spring-cloud-sleuth">Spring Cloud Sleuth</a> permet de gérer ces
+                correllation (il modifie les RestTemplate pour transmettre ces fameux headers).</p>
+            <p><a href="https://zipkin.io/">Zipkin</a> permet de collecter/consulter ce type d'information</p>
+        </section>
+        <section>
+            <h4>Correlation des logs</h4>
+            <img src="images/zipkin.png"/>
+        </section>
+
+        <!-- métriques -->
+        <section>
+            <h3>Patterns d'architecture</h3>
+            <h4>Métriques</h4>
+        </section>
+        <section>
+            <h4>Métriques</h4>
+            <p>Observer la santé des services</p>
+            <ul>
+                <li>healthcheck : est-ce que le service répond, est-ce que la BDD est bien connectée</li>
+                <li>trace : récupérer les dernières requêtes HTTP traitées</li>
+                <li>metrics : consommations mémoire / CPU</li>
+            </ul>
+            <p>Métriques métier (~analytics)</p>
+            <ul>
+                <li>Combien d'inscriptions au site</li>
+                <li>Combien de commandes passées</li>
+                <li>...</li>
+            </ul>
+        </section>
+        <section>
+            <h4>Métriques</h4>
+            <p>Exposition des métriques dans une application spring-boot</p>
+            <p>Utilisation de <a
+                    href="https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html">spring-boot-actuator</a>
+            </p>
+            <p>Expose des métriques basiques de nos applications/api</p>
+        </section>
+        <section>
+            <h4>Métriques</h4>
+            <h5>Collecte des métriques et exploitation</h5>
+            <p>Comme pour les logs, les métriques peuvent être envoyées à un serveur dédié pour être consultées</p>
+            <p>Centralisation des métriques</p>
+        </section>
+        <section>
+            <h4>Métriques</h4>
+            <p>Même principe que pour les logs</p>
+            <img src="images/prometheus.png"/>
+        </section>
+        <section>
+            <h4>Métriques</h4>
+            <p>Produit connus :</p>
+            <p>Stack "Prometheus/Grafana"</p>
+            <ul>
+                <li>Prometheus : Concentration des métriques (BDD time/series)</li>
+                <li>Grafana : Affichage sous forme de graphes, altering</li>
+            </ul>
+        </section>
+        <section>
+            <h4>Métriques</h4>
+            <p>Agir en fonction des métriques</p>
+            <p>Pris en charge par les orchestrateurs de containers (kubernetes par exemple)</p>
+            <ul>
+                <li>healthcheck KO => redémarrer le service</li>
+                <li>consommation mémoire / CPU élevée => déployer une instance supplémentaire du service (scale up)</li>
+            </ul>
+        </section>
+
+
+        <section>
+            <h2>TP</h2>
+            <img src="../images/leonidas.png"/>
+            <p>
+                <a href="09-tp-cloud.html">Patterns cloud <i class="em em-cloud"></i></a>
+            </p>
+        </section>
+
+    </div>
+
+</div>
+
+<script src="../reveal/dist/reveal.js"></script>
+<script src="../reveal/plugin/markdown/markdown.js"></script>
+<link rel="stylesheet" href="../reveal/plugin/highlight/zenburn.css">
+<script src="../reveal/plugin/highlight/highlight.js"></script>
+<script>
+    // More info about initialization & config:
+    // - https://revealjs.com/initialization/
+    // - https://revealjs.com/config/
+    Reveal.initialize({
+        hash: true,
+
+        // Learn about plugins: https://revealjs.com/plugins/
+        plugins: [RevealMarkdown, RevealHighlight],
+        markdown: {
+            smartypants: true
+        }
+    });
+</script>
+
+<aside class="miage_aside_logo"></aside>
+
+</body>
+</html>

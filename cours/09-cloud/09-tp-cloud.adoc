@@ -1,0 +1,224 @@
+:source-highlighter: pygments
+:prewrap!:
+
+:icons: font
+
+:toc: left
+:toclevels: 4
+
+:linkattrs:
+
+:sectlinks:
+:sectanchors:
+:sectnums:
+
+:experimental:
+
+:stem:
+
+= ALOM - TP 9 - Patterns Cloud
+
+== Présentation et objectifs
+
+Le but de ce TP est de mettre en place quelques mécaniques pour les développements orientés cloud.
+
+Nous allons :
+
+* créer des profils pour chacun de nos micro-services
+* exposer des métriques avec spring-boot-actuator
+* charger un fichier de données depuis un bucket
+
+== Création de profils et activation
+
+Aujourd'hui, nos micro-services doivent tourner sur plusieurs environnements distincts:
+
+* notre poste de développeur
+* un déploiement d'application Java ou Docker chez Clever-Cloud
+
+On pourrait aussi imaginer vouloir créer un troisième environnement, de recette métier par exemple.
+
+=== Extraction des profils
+
+Pour chacun de vos micro-services:
+
+* créez un fichier de configuration `application-clever.properties`
+Ce fichier contiendra toutes les properties liées à l'environnement d'exécution Clever-Cloud,
+par exemple les URL des autres micro-services, et l'URL de connexion à la base de données.
+* créez un fichier de configuration `application-local.properties`
+Ce fichier contiendra toutes les properties liées à l'exécution en local de votre projet,
+par exemple les URL des autres micro-services en `localhost`, ainsi que les properties `server.port`
+
+À cette étape, vous pouvez vider vos fichiers `application.properties`, dont le contenu a dû être migré dans les deux fichiers
+`application-local.properties` et `application-clever.properties`
+
+=== Activation des profils
+
+==== Sur votre poste
+
+Lorsque vous démarrez vos micro-services sur votre poste, il vous faut maintenant utiliser le profil `local`.
+Pour ce faire, vous pouvez indiquer à Spring que le profil local est le profil à utiliser par défaut en absence de tout autre profil.
+
+Pour ce faire, nous allons re-créer un fichier `application.properties`, et y ajouter une seule ligne:
+
+[source,properties]
+.application.properties
+----
+spring.profiles.active=local
+----
+
+==== Sur l'environnement Clever
+
+Pour vos applications déployées sur Clever-Cloud, nous allons utiliser des variables d'environnement.
+
+L'ajout d'une variable d'environnement se fait directement depuis l'onglet d'une application:
+
+image::images/clever-env-vars.png[]
+
+Ajoutez à vos applications la variable `SPRING_PROFILES_ACTIVE=clever`.
+
+Plutôt que d'ajouter la variable manuellement à chaque application, vous pouvez aussi:
+
+* créer un add-on de type *Configuration provider*
+* le lier à vos applications
+* y ajouter votre variable d'environnement
+
+== Exposition de métriques
+
+L'exposition de métriques pour nos applications se fait avec spring-boot-actuator.
+
+=== Dépendance maven
+
+Ajoutez la dépendance maven suivante dans vos projets :
+
+[source,xml]
+.pom.xml
+----
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-actuator</artifactId>
+</dependency>
+----
+
+NOTE: Ajouter la dépendance suffit à spring-boot pour configurer des routes par défaut.
+
+Démarrez ensuite vos applications.
+Vous devriez y observer des logs dédié à actuator au démarrage :
+----
+INFO 28827 --- [main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 2 endpoint(s) beneath base path '/actuator'
+TRACE 28827 --- [main] s.b.a.e.w.s.WebMvcEndpointHandlerMapping : Register "{GET /actuator/health, produces [application/vnd.spring-boot.actuator.v3+json || application/vnd.spring-boot.actuator.v2+json || application/json]}" to java.lang.Object org.springframework.boot.actuate.endpoint.web.servlet.AbstractWebMvcEndpointHandlerMapping$OperationHandler.handle(javax.servlet.http.HttpServletRequest,java.util.Map<java.lang.String, java.lang.String>)
+TRACE 28827 --- [main] s.b.a.e.w.s.WebMvcEndpointHandlerMapping : Register "{GET /actuator/health/**, produces [application/vnd.spring-boot.actuator.v3+json || application/vnd.spring-boot.actuator.v2+json || application/json]}" to java.lang.Object org.springframework.boot.actuate.endpoint.web.servlet.AbstractWebMvcEndpointHandlerMapping$OperationHandler.handle(javax.servlet.http.HttpServletRequest,java.util.Map<java.lang.String, java.lang.String>)
+TRACE 28827 --- [main] s.b.a.e.w.s.WebMvcEndpointHandlerMapping : Register "{GET /actuator/info, produces [application/vnd.spring-boot.actuator.v3+json || application/vnd.spring-boot.actuator.v2+json || application/json]}" to java.lang.Object org.springframework.boot.actuate.endpoint.web.servlet.AbstractWebMvcEndpointHandlerMapping$OperationHandler.handle(javax.servlet.http.HttpServletRequest,java.util.Map<java.lang.String, java.lang.String>)
+TRACE 28827 --- [main] s.b.a.e.w.s.WebMvcEndpointHandlerMapping : Register "{GET /actuator, produces [application/vnd.spring-boot.actuator.v3+json || application/vnd.spring-boot.actuator.v2+json || application/json]}" to public java.util.Map<java.lang.String, java.util.Map<java.lang.String, org.springframework.boot.actuate.endpoint.web.Link>> org.springframework.boot.actuate.endpoint.web.servlet.WebMvcEndpointHandlerMapping$WebMvcLinksHandler.links(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)
+----
+
+Consultez enfin pour vos services le endpoint "/actuator/health" :
+
+[source,json]
+.GET localhost:8080/actuator/health
+----
+{"status":"UP"}
+----
+
+=== Activer d'autres endpoints
+
+spring-boot-actuator propose de nombreux endpoints par défaut.
+
+https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html#production-ready-endpoints
+
+Exposez au moins les endpoints suivants :
+
+* `env`
+* `metrics`
+
+Allez jetter un oeil aux endpoints suivants :
+
+* http://localhost:8080/actuator/env
+* http://localhost:8080/actuator/metrics
+* http://localhost:8080/actuator/metrics/process.cpu.usage
+
+== Consommation d'un bucket
+
+Dans cette partie, nous allons connecter le micro-service `battle-api` à  un bucket, dans lequel nous allons stocker des rapports de combat.
+
+Lorsqu'un combat est terminé, nous allons le stocker dans un fichier au format JSON, à  titre d'archivage.
+
+=== Création du bucket
+
+Dans Clever-Cloud, créez un add-on de type *Cellar S3 storage*, ne le liez pas tout de suite à une application.
+Nommez le _cellar-<Votre Pseudo Github>_.
+
+Dans l'add-on, créez un bucket, nommez-le _battle-reports-<Votre Pseudo Github>_
+
+WARNING: les buckets doivent avoir un nom unique parmi tous les buckets existants.
+
+=== battle-api
+
+==== Dépendance Spring
+
+Pour consommer un bucket, nous allons utiliser le client du SDK Amazon S3.
+
+NOTE: Les buckets exposés par Clever-Cloud sont compatibles avec l'API Amazon S3.
+
+Ajoutez la dépendance suivante à votre code :
+
+[source,xml]
+.pom.xml
+----
+<dependency>
+  <groupId>com.amazonaws</groupId>
+  <artifactId>aws-java-sdk-s3</artifactId>
+  <version>1.12.109</version>
+</dependency>
+----
+
+==== Ajout de nouvelles properties
+
+Dans l'onglet _Information_ de l'add-on Cellar, sur Clever-Cloud, on peut voir que l'add-on expose des variables d'environnement.
+
+image::images/cellar-env.png[]
+
+Créez dans votre fichier `application-local.properties` les 3 properties correspondant aux variables d'environnement.
+
+NOTE: Pour l'exécution sur Clever-Cloud, les variables d'environnement seront directement injectées à l'application, nous n'avons pas besoin de les déclarer dans le profil `clever`.
+
+==== Configuration d'un client S3
+
+Créez une classe de configuration, dans laquelle vous créez un `@Bean` de type `AmazonS3`,
+un peu à la manière de ce qu'on a déjà fait pour les `RestTemplate` par exemple.
+
+Recevez en injection de dépendance avec `@Value` les 3 properties Cellar.
+
+Initialisez votre client S3 avec le code suivant (à adapter):
+
+[source,java]
+.CellarConfiguration.java
+----
+AWSCredentials credentials = new BasicAWSCredentials(
+  cellarKeyId,
+  cellarKeySecret
+);
+
+AmazonS3 s3client = AmazonS3ClientBuilder
+    .standard()
+    .withCredentials(new AWSStaticCredentialsProvider(credentials))
+    .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(cellarHost,""))
+    .build();
+----
+
+==== Création d'un objet dans le bucket
+
+Pour créer un nouvel objet dans le bucket, vous pouvez utiliser la méthode `putObject(String bucketName,String key,String content)`.
+
+À la fin d'un combat, sérialisez l'objet Battle en JSON (en utilisant un ObjectMapper), puis créez un nouvel objet dans votre bucket,
+ayant comme clé _<Battle.id>.json_.
+
+Déployez votre code modifié, et liez votre add-on cellar à votre _battle-api_, pour que ses variables d'environnement soient injectées.
+
+==== Parcours du bucket
+
+Clever-cloud ne propose pas d'IHM pour parcourir les buckets.
+Vous pouvez utiliser https://www.filestash.app/aws-s3-explorer.html pour explorer votre bucket, en y saisissant:
+
+* votre access key id (CELLAR_ADDON_KEY_ID)
+* votre secret access key (CELLAR_ADDON_KEY_SECRET)
+* le endpoint (dans la partie advanced) (CELLAR_ADDON_HOST)
