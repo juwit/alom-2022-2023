@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+
+    <title>ALOM - CI/CD</title>
+
+    <meta name="description" content="ALOM - CI/CD">
+    <meta name="author" content="Julien WITTOUCK <julien@codeka.io>">
+
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+    <link rel="stylesheet" href="../reveal/dist/reveal.css">
+    <link rel="stylesheet" href="../reveal/dist/theme/white.css" id="theme">
+
+    <link rel="stylesheet" href="../css/miage-lille.css"/>
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+          integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+</head>
+
+<body>
+
+<div class="reveal">
+
+    <div class="slides">
+        <section>
+            <h1>ALOM</h1>
+            <h2>⚙️ CI/CD</h2>
+        </section>
+
+        <section>
+            <h2>Problématiques</h2>
+            <ul>
+                <li>🔀 Comment intégrer le code des développeurs rapidement ?</li>
+                <li>✅ Valider la non-régression d'une application ?</li>
+                <li>📊 Suivre l'évolution de la qualité du code ?</li>
+                <li>🚀 Déployer automatiquement sur différents environnements ?</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Continuous Integration (CI)</h2>
+            <ul>
+                <li>intégration rapide du code des développeurs</li>
+                <li>exécution des tests unitaires</li>
+                <li>validation de la non régression du code</li>
+                <li>suivi de l'évolution de la qualité du code</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Continuous Deployment (or Continuous Delivery) (CD)</h2>
+            <ul>
+                <li>production d'un livrable pour l'application</li>
+                <li>mise à disposition sur un repository de binaire</li>
+                <li>déploiement automatisé</li>
+                <li>montée d'environnement en environnement</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Vision globale</h2>
+            <h3>CI + CD</h3>
+            <img src="ci-cd.png"/>
+        </section>
+
+        <section>
+            <h2>Notions communes aux plateformes</h2>
+            <ul>
+                <li>Pipeline / Workflow : constitue l'ensemble des étapes d'une intégration continue</li>
+                <li>Job : Une étape d'une intégration continue (ex: build, tests...)</li>
+                <li>Artefact: Un objet produit par un job (code compilé, package). Pourra être téléchargé ou passé en paramètre à un autre job.</li>
+                <li>Les pipelines / workflow sont exécutés sur toutes les branches du code</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Branches & CI</h2>
+            <img src="ci-cd-branches.png"/>
+        </section>
+
+        <section>
+            <h2>💡</h2>
+            <p>Le pipeline doit être adapté en fonction des pratiques de l'équipe de DEV</p>
+            <p>Chaque équipe a son modèle de gestion de branches (git flow, trunk based development...)</p>
+            <p>Chaque équipe a une maturité différente sur le déploiement (manuel, automatique en dev, continu en prod...)</p>
+        </section>
+
+        <section>
+            <h2>Les outils</h2>
+            <ul>
+                <li>
+                    Proches du code
+                    <ul>
+                        <li>Gitlab CI</li>
+                        <li>Github Actions</li>
+                    </ul>
+                </li>
+                <li>
+                    Externalisés
+                    <ul>
+                        <li>Jenkins</li>
+                        <li>travis-ci</li>
+                        <li>CircleCI</li>
+                    </ul>
+                </li>
+            </ul>
+        </section>
+
+        <section>
+            <h1>Gitlab CI</h1>
+        </section>
+
+        <section>
+            <h2>Gitlab-CI</h2>
+            <p>Gitlab CI est le produit d'intégration continue intégré à Gitlab.</p>
+            <p>Les pipelines sont décrits dans un fichier <code>.gitlab-ci.yml</code></p>
+            <p>Les pipelines sont déclenchés par un <i>push</i>, <i>tag</i>, appel d'API, manuellement, ou programmés (cron)</p>
+        </section>
+
+        <section>
+            <h2>Gitlab CI - Vocabulaire</h2>
+            <ul>
+                <li>Le <i>pipeline</i> constitue l'ensemble des étapes d'une intégration continue.</li>
+                <li>Un <i>pipeline</i> est découpé en <i>stage</i>s successifs (ex: build, test, deploy).</li>
+                <li>Un <i>stage</i> contient un ou plusieurs <i>job</i>s.</li>
+                <li>Un <i>job</i> est une action unitaire (ex: compilation, exécution des tests...), et contient un script shell.</li>
+                <li>Les <i>job</i>s d'un même stage sont exécutés en parallèle.</li>
+                <li>Les <i>job</i> peuvent se passer des <i>artefact</i>s (ex: un jar compilé).</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Gitlab CI</h2>
+            <img src="gitlab-ci-pipeline.png"/>
+        </section>
+
+        <section>
+            <h2>Gitlab CI - Techniquement</h2>
+            <ul>
+                <li>Le Gitlab Runner est un composant en charge de l'exécution des jobs.</li>
+                <li>Les jobs sont exécutés dans des containers <i>docker</i>.</li>
+                <li>Le repository de code est cloné dans le container avant l'exécution du job.</li>
+                <li>Des variables d'environnement sont injectées dans le container du job.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Anatomie d'un job Gitlab CI</h2>
+            <img src="gitlab-ci-job.png"/>
+        </section>
+
+        <section>
+            <h2>Anatomie d'un pipeline</h2>
+            <div style="display: flex; flex-direction: row;">
+                <img src="gitlab-ci-pipeline-1.png" style="width: 50%;"/>
+                <img src="gitlab-ci-pipeline-2.png" style="width: 50%;"/>
+            </div>
+        </section>
+
+        <section>
+            <h2>Configuration avec les variables d'environnement</h2>
+            <img src="gitlab-ci-variables.png"/>
+        </section>
+
+        <section>
+            <h2>Liens utiles</h2>
+            <a target="_blank" href="https://docs.gitlab.com/ee/ci/yaml/">La référence pour le fichier .gitlab-ci.yml</a>
+            <a target="_blank" href="https://docs.gitlab.com/ee/ci/examples/#cicd-templates">Des templates pour tous les langages</a>
+            <a target="_blank" href="https://docs.gitlab.com/ee/ci/variables/predefined_variables.html">Les variables prédéfinies</a>
+        </section>
+
+        <section>
+            <h1>Github Actions</h1>
+        </section>
+
+        <section>
+            <h2>Github Actions</h2>
+            <p>Github Actions est le produit d'intégration continue intégré à Github.</p>
+            <p>Les <i>workflow</i>s sont décrits dans des fichiers yml déposés dans le répertoire <code>.github/workflows</code>.</p>
+            <p>Les workflow sont déclenchés par des <i>event</i>.</p>
+            <p>
+                un <i>event</i> peut être un <i>push</i>, <i>tag</i>, appel d'API,
+                déclenchement manuel, ou programmés (cron),
+                mais aussi, une nouvelle issue, un nouveau label sur une issue/pr, un commentaire dans une issue...
+            </p>
+        </section>
+
+        <section>
+            <h2>Github Actions - Vocabulaire</h2>
+            <ul>
+                <li>Le <i>workflow</i> constitue l'ensemble des étapes d'une intégration continue.</li>
+                <li>Un <i>workflow</i> est découpé en <i>job</i>s.</li>
+                <li>Un <i>job</i> est une suite de <i>step</i>s unitaire (ex: compilation, exécution des tests...).</li>
+                <li>Une <i>step</i> est soit un script shell, soit une <i>action</i>.</li>
+                <li>Une <i>action</i> est un bloc d'intégration continu réutilisable.</li>
+                <lI>Une marketplace permet de lister/publier des actions.</lI>
+                <li>Les <i>job</i>s d'un même <i>workflow</i> sont exécutés en parallèle.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Github Actions - Les actions</h2>
+            <p>Une action est un élément de workflow réutilisable</p>
+            <ul>
+                Ex:
+                <li>Récupération du code d'un repository</li>
+                <li>Installation d'un langage/runtime</li>
+                <li>Exécuter une compilation</li>
+                <li>Sauvegarder/Télécharger un artefact</li>
+                <li>Envoyer une notification Slack / Discord</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Github Actions - Techniquement</h2>
+            <ul>
+                <li>Le Runner est un composant en charge de l'exécution des jobs.</li>
+                <li>Les jobs sont exécutés dans un environnement <i>virtualisé</i> (une VM).</li>
+                <li>
+                    Les VM de runner contiennent un ensemble de librairies pré-installées, langages et outils.
+                    <a href="https://github.com/actions/virtual-environments/blob/ubuntu20/20211108.1/images/linux/Ubuntu2004-README.md" target="_blank">La liste pour ubuntu 20.04</a>.
+                </li>
+                <li>Le repository de code n'est pas cloné avant l'exécution du job (il faut le faire avec une action).</li>
+                </ul>
+        </section>
+        <section>
+            <h2>Github Actions - Variables &amp; Secrets</h2>
+            <ul>
+                <li>Des variables d'environnement sont injectées dans la VM du workflow.</li>
+                <li>Des <i>secret</i>s peuvent être configurés pour passer des paramètres (clés d'API...)</li>
+                <li>Un <i>secret</i> <code>GITHUB_TOKEN</code> pour accéder à l'API Github est fourni par défaut.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Anatomie d'un job Github Actions</h2>
+            <img src="github-actions-job.png"/>
+        </section>
+
+        <section>
+            <h2>Une <i>step</i></h2>
+            <ul></ul>
+            <ul>
+                <li><code>uses</code> pour importer une action existante</li>
+                <li><code>with</code> pour lui passer des paramètres</li>
+                <li><code>run</code> pour exécution un script shell</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Anatomie d'un workflow</h2>
+            <img src="github-actions-workflow.png" style="width: 40%;"/>
+        </section>
+
+        <section>
+            <h2>Liens utiles</h2>
+            <a target="_blank" href="https://github.com/marketplace?type=actions">La marketplace</a>
+            <a target="_blank" href="https://docs.github.com/en/actions/learn-github-actions/events-that-trigger-workflows">Les event qui peuvent lancer un workflow</a>
+            <a target="_blank" href="https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions">La syntaxe complète</a>
+        </section>
+
+        <section>
+            <h2>TP</h2>
+            <img src="../images/leonidas.png"/>
+            <p>
+                <a href="11-tp-ci-cd.html">CI/CD</a>
+            </p>
+        </section>
+
+    </div>
+
+</div>
+
+<script src="../reveal/dist/reveal.js"></script>
+<script src="../reveal/plugin/markdown/markdown.js"></script>
+<link rel="stylesheet" href="../reveal/plugin/highlight/zenburn.css">
+<script src="../reveal/plugin/highlight/highlight.js"></script>
+<script>
+    // More info about initialization & config:
+    // - https://revealjs.com/initialization/
+    // - https://revealjs.com/config/
+    Reveal.initialize({
+        hash: true,
+
+        // Learn about plugins: https://revealjs.com/plugins/
+        plugins: [RevealMarkdown, RevealHighlight],
+        markdown: {
+            smartypants: true
+        }
+    });
+</script>
+
+<aside class="miage_aside_logo"></aside>
+
+</body>
+</html>

@@ -1,0 +1,75 @@
+:source-highlighter: pygments
+:prewrap!:
+
+:icons: font
+
+:toc: left
+:toclevels: 4
+
+:linkattrs:
+
+:sectlinks:
+:sectanchors:
+:sectnums:
+
+:experimental:
+
+:stem:
+
+= ALOM - TP 11 - CI-CD
+
+== Présentation et objectifs
+
+Le but de ce TP est de mettre en place quelques mécaniques autour de la CI/CD sur Github Actions et Gitlab-CI.
+
+Nous allons :
+
+* créer un workflow Github Actions qui effectue la compilation d'un projet Spring-Boot
+* créer un workflow Github Actions qui tague les nouvelles issues et pr d'un repository Github
+* créer un pipeline Gitlab-CI qui effectue la compilation d'un projet Spring-Boot
+
+NOTE: Ce TP n'entre pas dans la notation finale, il est complètement facultatif
+
+== Github Actions
+
+Nous commençons par Github Actions, étant donné que nos TP sont déjà sur Github !
+
+=== Exécution de tests
+Pour chacun de vos projets, créez un workflow qui exécute :
+
+* la récupération du code avec une action `checkout`
+* l'installation d'un Java 17 avec l'action `setup-java`
+* l'exécution d'un script pour effectuer un `mvn test`
+
+Ce workflow devra s'exécuter pour tous les évènements de push sur toutes les branches, et pourra aussi être lancé manuellement.
+
+=== Labelling des issues / pr
+
+Créez un nouveau workflow qui pose un label sur les nouvelles issues / PR.
+
+Créez tout d'abord un nouveau label dans votre projet.
+Cela se fait dans Issues/Labels.
+
+Nommez ce label `new`.
+
+Ce workflow devra:
+
+* être déclenché à la création d'une issue (issue opened)
+* utiliser l'action 'github-script' pour poser le label sur l'issue
+
+Faites la même chose pour les PR (dans un autre workflow)
+
+== Gitlab CI
+
+Pour Gitlab-CI, commencez par créer / importer un de vos projets sur Gitlab.com ou sur gitlab.univ-lille.fr.
+
+Quand vous créez votre projet Gitlab, vous pouvez importer directement un projet depuis Github (en saisissant un personal access token).
+
+=== Exécution de tests
+
+Créez un pipeline :
+
+* qui s'exécute dans une image docker maven:3-openjdk-17
+* qui effectue un `mvn test`
+
+Ajoutez d'autres étapes si vous le souhaitez :)
