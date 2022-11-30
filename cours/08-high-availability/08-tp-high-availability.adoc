@@ -245,8 +245,7 @@ Le combat prend la forme suivante :
                 "speed": 37,
                 "level": 18,
                 "hp": 40,
-                "ko": false,
-                "alive": true
+                "ko": false
             }
         ],
         "nextTurn": true
