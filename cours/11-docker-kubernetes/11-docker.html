@@ -1,0 +1,765 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+
+    <title>ALOM - Docker</title>
+
+    <meta name="description" content="ALOM - Docker">
+    <meta name="author" content="Julien WITTOUCK <julien@codeka.io>">
+
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+    <link rel="stylesheet" href="../reveal/dist/reveal.css">
+    <link rel="stylesheet" href="../reveal/dist/theme/white.css" id="theme">
+
+    <link rel="stylesheet" href="../css/miage-lille.css"/>
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+          integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+</head>
+
+<body>
+
+<div class="reveal">
+
+    <div class="slides">
+        <section>
+            <h2>Docker 🐳</h2>
+            <h3>Highway to whale</h3>
+        </section>
+
+        <section>
+            <h2>Au menu</h2>
+            <ul>
+                <li>Théoria : Les conteneurs</li>
+                <li>Docker : les bases</li>
+                <li>Les commandes 'docker'</li>
+                <li>Gestion et construction d'images</li>
+            </ul>
+        </section>
+
+        <section data-background-image="./images/pexels-photo-122164.jpeg" data-state="slide-with-bg">
+            <!-- Affichage inversé à la france-info : titre de slide en bas, liste avec affichage inversé -->
+            <ul>
+                <li class="fragment" data-fragment-index="5">Réutilisabilité</li>
+                <li class="fragment" data-fragment-index="4">Normalisée</li>
+                <li class="fragment" data-fragment-index="3">Unité de déploiement "universel"</li>
+                <li class="fragment" data-fragment-index="2">Unité de packaging</li>
+                <li class="fragment" data-fragment-index="1">Environnement isolé</li>
+                <li class="fragment" data-fragment-index="0">Unité de transport intermodal</li>
+            </ul>
+            <h2>Les conteneurs</h2>
+        </section>
+
+        <section>
+            <h2>Usages Dans l'IT</h2>
+            <ul>
+                <li>Isolation de processus / ressources ("virtualisation")</li>
+                <li>Portabilité</li>
+                <li>Ouverture au Cloud</li>
+                <li>Déploiement rapide</li>
+                <li>Normalisation (<a href="https://www.opencontainers.org">OCI</a>)</li>
+            </ul>
+        </section>
+        <section>
+            <h2>Historique Dans l'IT</h2>
+            <ul>
+                <li><a href="http://man7.org/linux/man-pages/man1/chroot.1.html">Unix chroot</a> (1980) (<b>ch</b>ange
+                    <b>root</b>)
+                </li>
+                <li><a href="https://linuxcontainers.org/fr/">LXC</a> (2008) (<b>L</b>inu<b>x</b> <b>c</b>ontainers)
+                </li>
+                <li><a href="https://www.docker.com/">Docker</a> (2013)</li>
+                Emergence of industry standards for containers :
+                <li><a href="https://www.opencontainers.org">OCI</a> (2015) (<b>O</b>pen <b>C</b>ontainer <b>I</b>nitiatve)
+                </li>
+                <li><a href="https://www.docker.com/blog/runc/">runc</a> (2015) (still not reached 1.0.0)</li>
+                <li><a href="https://github.com/containerd/containerd">containerd</a> (2015)</li>
+
+            </ul>
+        </section>
+
+        <section>
+            <h2>Les conteneurs ne sont pas...</h2>
+            <h4 class="fragment" data-fragment-index="1">Des machines virtuelles</h4>
+            <h4 class="fragment" data-fragment-index="2">De la magie</h4>
+            <h4 class="fragment" data-fragment-index="3">Un bug de la matrice</h4>
+            <img class="fragment" data-fragment-index="3" src="images/morpheus.png"/>
+        </section>
+
+        <section>
+            <h2>Virtual Machines Vs Containers</h2>
+            <img src="images/docker-vs-virtual-machines.png"/>
+        </section>
+
+        <section data-background-image="./images/whale-367233_1920.jpg" data-state="slide-with-bg">
+            <ul>
+                <li class="fragment" data-fragment-index="50">$ docker swarm : gestion de clusters</li>
+                <li class="fragment" data-fragment-index="40">$ docker-compose : gestion de services
+                    (multi-containers)
+                </li>
+                <li class="fragment" data-fragment-index="35">docker hub : registry centralisé de stockage d'images</li>
+                <li class="fragment" data-fragment-index="30">$ docker (cli : command line interface) => appels rest à
+                    l'engine
+                </li>
+                <li class="fragment" data-fragment-index="25">images et containers</li>
+                <li class="fragment" data-fragment-index="20">$ dockerd (engine)</li>
+                <li class="fragment" data-fragment-index="10">Manipulation de containers LXC</li>
+                <li class="fragment" data-fragment-index="0">écrit en Go</li>
+            </ul>
+            <h2>Docker</h2>
+        </section>
+
+        <section data-background-image="./images/vehicle-chrome-technology-automobile-65623.jpeg"
+                 data-state="slide-with-bg">
+            <h2>Docker engine</h2>
+
+            <ul>
+                <li class="fragment" data-fragment-index="30">les <b><a
+                        href="http://man7.org/linux/man-pages/man7/cgroups.7.html">cgroups</a></b> Linux (control groups
+                    : gestion de ressources mémoire/cpu/disque)
+                </li>
+                <li class="fragment" data-fragment-index="20">les <b><a
+                        href="http://man7.org/linux/man-pages/man7/namespaces.7.html">namespaces</a></b> Linux
+                    (environments isolés: PID, network itf, filesystem mnt, user and groups),
+                </li>
+                <li class="fragment" data-fragment-index="10">le kernel <b>Linux</b></li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Docker engine</h2>
+            <p>Un container c'est donc</p>
+            <ul>
+                <li>un filesystem isolé "/"</li>
+                <li>des users isolés (root, users unix...)</li>
+                <li>des process isolés</li>
+                <li>des réseaux isolés</li>
+            </ul>
+            <p>Aussi proche que possible d'une installation linux standard mais qui s'exécute sur le kernel hôte</p>
+        </section>
+
+        <section data-background-image="images/pexels-photo-376464.jpeg" data-state="slide-with-bg">
+            <h2>Containers et images</h2>
+            <ul>
+                <li class="fragment" data-fragment-index="45">Les images sont nommées (tag)</li>
+                <li class="fragment" data-fragment-index="40">Les containers sont instanciés à partir d'images</li>
+                <li class="fragment" data-fragment-index="30">Un <code>Dockerfile</code> décrit la construction d'une
+                    image
+                </li>
+                <li class="fragment" data-fragment-index="20">Une image s'appuie sur une image parente</li>
+                <li class="fragment" data-fragment-index="10">Les images sont découpées en 'layers'</li>
+                <li class="fragment" data-fragment-index="0">Les images sont l'unité de base de docker</li>
+            </ul>
+        </section>
+
+        <section data-background-image="images/pexels-photo-376464.jpeg" data-state="slide-with-bg">
+            <h2>Containers et images</h2>
+            <ul>
+                <li class="fragment" data-fragment-index="70">Un container exécute un <code>process</code> et s'arrête
+                    avec lui
+                </li>
+                <li class="fragment" data-fragment-index="60">Les containers sont <code>writable</code></li>
+                <li class="fragment" data-fragment-index="50">Les images sont <code>read-only</code></li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Containers et images</h2>
+            <img src="./images/container-layers.jpg"/>
+        </section>
+
+        <section>
+            <h2>Containers et images</h2>
+            <img src="./images/sharing-layers.jpg"/>
+        </section>
+
+        <section>
+            <h2>Containers et images</h2>
+            <h3>Taille du container sur le disque</h3>
+            <p>
+                Taille de l'image (<code>virtual size</code>)
+            <div style="text-align: center;">+</div>
+            Taille du container
+            </p>
+            <p>Stockage dans <code>/var/lib/docker/image</code> et <code>/var/lib/docker/containers</code></p>
+        </section>
+
+        <section data-background-image="images/cli.png" data-background-position="top left" data-state="slide-with-bg">
+            <h2>$ docker</h2>
+            <ul>
+                <li class="fragment" data-fragment-index="10">Communique avec l'engine en HTTP/REST via sockets unix
+                    /var/run/docker.sock ou en TCP
+                </li>
+                <li class="fragment" data-fragment-index="0">Client en ligne de commande</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>$ docker</h2>
+            <table>
+                <thead>
+                <tr>
+                    <th>Commande</th>
+                    <th>ça fait quoi?</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>docker image build</td>
+                    <td>Construit une image à partir d'un Dockerfile</td>
+                </tr>
+                <tr>
+                    <td>docker container create IMAGE</td>
+                    <td>Instancie un container à partir d'une image</td>
+                </tr>
+                <tr>
+                    <td>docker container start / docker container stop</td>
+                    <td>Démarre/Arrète un container</td>
+                </tr>
+                <tr>
+                    <td>docker container run IMAGE</td>
+                    <td>Instancie un container à partir d'une image, et le démarre</td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>$ docker</h2>
+            <table>
+                <thead>
+                <tr>
+                    <th>Commande</th>
+                    <th>ça fait quoi?</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>docker container logs CONTAINER</td>
+                    <td>Affiche les logs d'un container (stdout+stderr)</td>
+                </tr>
+                <tr>
+                    <td>docker container exec CONTAINER CMD</td>
+                    <td>Exécute une commande dans un container existant</td>
+                </tr>
+                <tr>
+                    <td>docker container diff CONTAINER</td>
+                    <td>Affiche les modifications du filesystem du container</td>
+                </tr>
+                <tr>
+                    <td>docker container update [OPTIONS] CONTAINER</td>
+                    <td>Modifie les options d'un container existant (mem/cpu/restart...)</td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>$ docker</h2>
+            <p>Commandes de management</p>
+            <table>
+                <thead>
+                <tr>
+                    <th>Commande</th>
+                    <th>ça fait quoi?</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>docker image ls</td>
+                    <td>Liste les images disponibles</td>
+                </tr>
+                <tr>
+                    <td>docker container ls [-a]</td>
+                    <td>Liste les containers running (-a : tous les containers)</td>
+                </tr>
+                <tr>
+                    <td>docker container rm CONTAINER</td>
+                    <td>Supprime un container</td>
+                </tr>
+                <tr>
+                    <td>docker image rm IMAGE</td>
+                    <td>Supprime une image</td>
+                </tr>
+                </tbody>
+            </table>
+
+        </section>
+
+        <section>
+            <h2>$ docker</h2>
+            <p>Commandes de management</p>
+            <table>
+                <thead>
+                <tr>
+                    <th>Commande</th>
+                    <th>ça fait quoi?</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>docker image pull IMAGE</td>
+                    <td>Télécharge une image depuis un registry</td>
+                </tr>
+                <tr>
+                    <td>docker image push IMAGE</td>
+                    <td>Envoie une image dans un registry</td>
+                </tr>
+                </tbody>
+            </table>
+
+        </section>
+
+
+        <section>
+            <h2>$ docker</h2>
+            <p>Commandes de monitoring</p>
+            <table>
+                <thead>
+                <tr>
+                    <th>Commande</th>
+                    <th>ça fait quoi?</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>docker [container|image] inspect [ID]</td>
+                    <td>Affiche les infos d'une image ou d'un container</td>
+                </tr>
+                <tr>
+                    <td>docker image history [IMG]</td>
+                    <td>Affiche les layers d'une image</td>
+                </tr>
+                <tr>
+                    <td>docker events</td>
+                    <td>Affiche les events (création/suppressions...)</td>
+                </tr>
+                <tr>
+                    <td>docker stats [CONTAINER]</td>
+                    <td>Affiche les stats d'un container</td>
+                </tr>
+                </tbody>
+            </table>
+
+        </section>
+
+        <section data-background-image="images/pexels-photo-208459.jpeg" data-background-position="top right"
+                 data-state="slide-with-bg">
+            <h2>Premiers secours : --help</h2>
+            <ul>
+                <li>...</li>
+                <li>docker container exec --help</li>
+                <li>docker image build --help</li>
+                <li>docker container run --help</li>
+                <li>docker container create --help</li>
+                <li>docker --help</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Run</h2>
+            <p>Démarre un container : RUN = CREATE + START</p>
+            <h4>docker container run [OPTIONS] IMAGE [COMMAND] [ARG...]</h4>
+            <pre><code data-noescape data-trim class="bash">
+# Nommer un container
+$ docker container run <mark>--name monServer</mark> nginx # Nomme le container
+
+# Exécute un nouveau container et y attache le terminal
+$ docker container run <mark>-it</mark> ubuntu
+
+# Lancer un container en arrière plan (detached)
+$ docker container run <mark>-d</mark> nginx
+</code></pre>
+        </section>
+
+        <section>
+            <h2>Run</h2>
+            <pre><code data-noescape data-trim class="bash">
+# Expose les ports d'un container en automatique (ports aléatoires)
+$ docker container run <mark>-P</mark> nginx
+
+# Exposer un port particulier vers un port de l'hôte
+$ docker container run <mark>-p 9876:80</mark> nginx
+$ docker container run <mark>-p 7894:80</mark> <mark>-p 1234:443</mark> nginx
+
+# Monte un fichier ou répertoire local dans le container (volume)
+$ docker container run <mark>-v test.conf:/etc/nginx/nginx.conf</mark> -p 4561:80 nginx
+
+# Démarre un container et exécute la commande donnée
+# (surcharge la commande par défaut)
+$ docker container run nginx <mark>cat /etc/nginx/nginx.conf</mark>
+</code></pre>
+        </section>
+
+        <section>
+            <h2>Exec</h2>
+            <p>Exécute un processus dans un container 'running'</p>
+            <h4>docker container exec [OPTIONS] CONTAINER CMD [ARG...]</h4>
+            <pre><code data-noescape class="bash"># Démarre un shell interactif dans un container
+$ docker container exec <mark>-it</mark> nginx <mark>bash</mark>
+
+# liste les variables d'environnement d'un container
+$ docker container exec nginx <mark>printenv</mark>
+
+# Affiche le contenu d'un fichier dans le container
+$ docker container exec nginx <mark>cat /etc/nginx/nginx.conf</mark></code></pre>
+        </section>
+
+        <section data-background-image="images/pexels-photo-7931.jpg" data-background-position="top"
+                 data-state="slide-with-bg">
+            <h2>Construction d'images</h2>
+            <ul>
+                <li class="fragment" data-fragment-index="20">hub.docker.com</li>
+                <li class="fragment" data-fragment-index="10">$ docker image build</li>
+                <li class="fragment" data-fragment-index="0">Dockerfile</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Dockerfile</h2>
+            <p>Commandes principales</p>
+            <table>
+                <thead>
+                <tr>
+                    <th>Instruction</th>
+                    <th>ça fait quoi?</th>
+                    <th>exemple</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>FROM</td>
+                    <td>Image parente</td>
+                    <td>FROM ubuntu</td>
+                </tr>
+                <tr>
+                    <td>RUN</td>
+                    <td>Exécute une commande</td>
+                    <td>RUN apt-get install maven</td>
+                </tr>
+                <tr>
+                    <td>COPY</td>
+                    <td>Copie des fichiers dans l'image</td>
+                    <td>COPY myApp.jar /app</td>
+                </tr>
+                <tr>
+                    <td>CMD</td>
+                    <td>Indique la commande qui sera exécutée par les conteneurs</td>
+                    <td>CMD ["/bin/echo", "hello world"]</td>
+                </tr>
+                </tbody>
+            </table>
+
+        </section>
+
+        <section>
+            <h2>Dockerfile</h2>
+            <p>Commandes principales</p>
+            <table>
+                <thead>
+                <tr>
+                    <th>Instruction</th>
+                    <th>ça fait quoi?</th>
+                    <th>exemple</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>ENV</td>
+                    <td>Variable d'environnement</td>
+                    <td>ENV MVN_HOME=/app/maven</td>
+                </tr>
+                <tr>
+                    <td>LABEL</td>
+                    <td>Ajoute une méta-donnée à l'image</td>
+                    <td>Label maintainer="julien@codeka.io"</td>
+                </tr>
+                <tr>
+                    <td>EXPOSE</td>
+                    <td>Marque un port à exposer</td>
+                    <td>EXPOSE 8080</td>
+                </tr>
+                <tr>
+                    <td>VOLUME</td>
+                    <td>Marque un répertoire comme persistant</td>
+                    <td>VOLUME /app/data</td>
+                </tr>
+                </tbody>
+            </table>
+
+        </section>
+
+        <section>
+            <h2>Dockerfile</h2>
+            <p>Commandes principales</p>
+            <table>
+                <thead>
+                <tr>
+                    <th>Instruction</th>
+                    <th>ça fait quoi?</th>
+                    <th>exemple</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>WORKDIR</td>
+                    <td>Modifie le répertoire courant</td>
+                    <td>WORKDIR /opt</td>
+                </tr>
+                <tr>
+                    <td>HEALTHCHECK</td>
+                    <td>Permet de paramétrer le healthcheck des conteneurs</td>
+                    <td>HEALTHCHECK --interval=5m --timeout=3s CMD curl -f http://localhost/</td>
+                </tr>
+                </tbody>
+            </table>
+
+        </section>
+
+        <section>
+            <h2>Construction d'images</h2>
+            <p>Exemple de Dockerfile simple:</p>
+            <pre><code data-noescape class="docker">FROM ubuntu:latest # image parente
+ENV MESSAGE="Julien"
+CMD echo Hello $MESSAGE # commande à exécuter au lancement d'un container</code></pre>
+            <pre><code data-noescape>$ <mark>docker image build</mark> <mark>-t</mark> codekaio/helloworld <mark>.</mark></code></pre>
+            <p>
+                <mark>docker image build</mark>
+                permet de construire une image.
+            </p>
+            <p>
+                <mark>-t</mark>
+                permet de lui donner un tag.
+            </p>
+            <p>
+                <mark>.</mark>
+                indique le répertoire de construction.
+            </p>
+        </section>
+
+        <section>
+            <h2>Construction d'images</h2>
+            <pre><code data-noescape>$ <mark>docker build -t /helloworld .</mark>
+Sending build context to Docker daemon  2.048kB
+Step 1/3 : <mark>FROM ubuntu</mark>
+latest: Pulling from library/ubuntu
+d5c6f90da05d: Pull complete
+1300883d87d5: Pull complete
+c220aa3cfc1b: Pull complete
+2e9398f099dc: Pull complete
+dc27a084064f: Pull complete
+Digest: sha256:34471448724419596ca4e890496d375801de21b0e67b81a77fd6155ce001edad
+Status: Downloaded newer image for ubuntu:latest
+ ---> ccc7a11d65b1
+Step 2/3 : <mark>ENV MESSAGE Julien</mark>
+ ---> Running in 41b69f00b536
+ ---> d74968af6efa
+Removing intermediate container 41b69f00b536
+Step 3/3 : <mark>CMD echo Hello $MESSAGE</mark>
+ ---> Running in 1f52994bd3f4
+ ---> 8ce84b0a2112
+Removing intermediate container 1f52994bd3f4
+Successfully built 8ce84b0a2112
+Successfully <mark>tagged codekaio/helloworld:latest</mark>
+</code></pre>
+        </section>
+
+        <section>
+            <h2>Listing des images</h2>
+            <pre><code>$ docker image ls
+REPOSITORY            TAG                 IMAGE ID            CREATED              SIZE
+codekaio/helloworld   latest              8ce84b0a2112        About a minute ago   120 MB
+ubuntu                latest              ccc7a11d65b1        2 weeks ago          120 MB</code></pre>
+            <h2>Lancement d'un container</h2>
+        <pre><code>$ docker container run codekaio/helloworld
+Hello Julien !</code></pre>
+        </section>
+
+        <section>
+            <h2>Images applicatives</h2>
+            <div style="width: 80%; display: block;">
+                        <pre style="width: 50%; float: left;"><code class="docker">FROM node:latest # image parente
+
+RUN mkdir /app # Création du répertoire
+COPY . /app # Copie de tout le contexte dans le répertoire
+
+WORKDIR /app # On se positionne dans le répertoire
+
+RUN npm install -P # Installation des dépendances applicatives
+CMD ["npm", "run"] # Commande de lancement de l'application</code></pre>
+                <img src="images/appli.png" style="width: 40%;"/>
+            </div>
+        </section>
+
+        <section>
+            <h2>Images applicatives</h2>
+            <h4>.dockerignore</h4>
+            <p>Permet d'indiquer le contexte du build (quels fichiers sont disponible à la copie)</p>
+            <p>Réduction de la taille de l'image finale</p>
+            <div style="width: 80%; display: block;">
+                        <pre style="width: 50%; float: left;"><code class="ignore">tests/
+.idea/
+.git/
+node_modules/
+target/
+.editorconfig
+.eslintrc
+README.md</code></pre>
+                <img src="images/gatsby.png" style="width: 40%;"/>
+            </div>
+        </section>
+
+        <section data-background-image="images/dockerhub.png" data-background-position="top left"
+                 data-state="slide-with-bg-light">
+            <h2>hub.docker.com</h2>
+            <ul>
+                <li class="fragment" data-fragment-index="40">$ docker push</li>
+                <li class="fragment" data-fragment-index="30">$ docker login</li>
+                <li class="fragment" data-fragment-index="20">Possiblité de s'inscrire pour push des images</li>
+                <li class="fragment" data-fragment-index="10">$ docker pull &lt;image:tag&gt;</li>
+                <li class="fragment" data-fragment-index="5">$ docker search mysql</li>
+                <li class="fragment" data-fragment-index="2">Dockerfiles/Tags/Github...</li>
+                <li class="fragment" data-fragment-index="0">Registry officiel d'images docker</li>
+            </ul>
+        </section>
+
+        <section data-background-image="images/pexels-photo-221322.jpeg" data-state="slide-with-bg">
+            <h2>Embarquement immédiat</h2>
+            <ul>
+                <li>nginx</li>
+                <li>redis</li>
+                <li>busybox</li>
+                <li>ubuntu</li>
+                <li>alpine</li>
+                <li>registry</li>
+                <li>mysql</li>
+                <li>mongo</li>
+                <li>elasticsearch</li>
+            </ul>
+        </section>
+
+        <section data-background-image="images/leonidas.jpeg" data-state="slide-with-bg">
+            <h2>TP !</h2>
+        </section>
+
+        <section>
+            <h2>Outillage</h2>
+            <p><a href="http://play-with-docker.com">play-with-docker.com</a></p>
+            <p>Créer une instance et obtenir l'accès à un shell : </p>
+            <img src="images/play-with-docker.png"/>
+        </section>
+
+        <section>
+            <h2>Mise en bouche</h2>
+            <ol>
+                <li>Vérifier la version de docker disponible</li>
+                <span class="fragment"><pre><code class="bash">$ docker version</code></pre></span>
+                <li>Récupérer l'image 'hello-world:latest' depuis le docker hub</li>
+                <span class="fragment"><pre><code class="bash">$ docker pull hello-world:latest</code></pre></span>
+                <li>Exécuter un container à partir de cette image</li>
+                <span class="fragment"><pre><code class="bash">$ docker container run hello-world</code></pre></span>
+            </ol>
+            <img src="images/bender_cigar.jpg"/>
+        </section>
+
+        <section>
+            <h2>Mise en bouche (cont'd)</h2>
+            <div style="display: flex; flex-direction: row;">
+                <img src="images/bender.png"/>
+                <ol style="margin-left: 5rem;">
+                    <li>Supprimer l'image 'hello-world:latest' et le container créé</li>
+                    <span class="fragment"><pre><code class="shell">$ docker ps -a & docker rm &lt;id&gt; & docker rmi hello-world</code></pre></span>
+                    <li>Récupérer l'image 'nginx' (serveur http)</li>
+                    <span class="fragment"><pre><code class="shell">$ docker pull nginx</code></pre></span>
+                    <li>Exécuter un container nginx en exposant le port 80</li>
+                    <span class="fragment"><pre><code class="shell">$ docker container run -p 8080:80 nginx</code></pre></span>
+                </ol>
+            </div>
+        </section>
+
+        <section>
+            <h2>Mise en bouche (cont'd 2)</h2>
+            <ol>
+                <li>Récupérer un projet spring boot</li>
+                <span class="fragment"><pre><code class="shell">$ git clone https://github.com/spring-guides/gs-spring-boot.git</code></pre></span>
+                <li>Aller dans le répertoire 'complete'</li>
+                <li>Récupérer l'image 'maven:alpine'</li>
+                <span class="fragment"><pre><code class="shell">$ docker pull maven:alpine</code></pre></span>
+                <li>Créer un Dockerfile pour exécuter l'application !</li>
+                <span class="fragment"><pre><code class="docker">FROM maven:alpine
+RUN mkdir /app
+COPY . /app
+WORKDIR /app
+RUN mvn install
+CMD ["mvn", "spring-boot:run"]</code></pre></span>
+            </ol>
+        </section>
+
+        <section>
+            <h2>Mise en bouche (cont'd 3)</h2>
+            <div style="display: flex; flex-flow: row;">
+                <img src="images/gender_bender.png"/>
+                <ol>
+                    <li>Créer l'image de notre application</li>
+                    <span class="fragment"><pre><code class="shell">$ docker build -t app-spring-boot .</code></pre></span>
+                    <li>Exécuter l'application spring boot en exposant le port 8080 sur le 7777 (en mode détaché)</li>
+                    <span class="fragment"><pre><code class="shell">$ docker create --name instance -p 7777:8080 app-spring-boot
+$ docker container start instance</code></pre></span>
+                    <li>Aller voir les logs de notre application</li>
+                    <span class="fragment"><pre><code class="shell">$ docker logs instance</code></pre></span>
+                </ol>
+            </div>
+        </section>
+
+        <section>
+            <h2>Bravo !</h2>
+            <p>Vous avez exécuté votre première application Spring dans un conteneur !</p>
+            <img class="fragment" src="./images/bender_applause.jpg"/>
+        </section>
+
+        <section data-background-image="images/pexels-photo-379964.jpeg" data-state="slide-with-bg">
+            <h2>Fin !</h2>
+        </section>
+
+        <section>
+            <h3>Thank you!</h3>
+        </section>
+        <section>
+            <h3>Questions?</h3>
+            <img src="images/questions.png"/>
+        </section>
+
+    </div>
+
+</div>
+
+<script src="../reveal/dist/reveal.js"></script>
+<script src="../reveal/plugin/markdown/markdown.js"></script>
+<link rel="stylesheet" href="../reveal/plugin/highlight/zenburn.css">
+<script src="../reveal/plugin/highlight/highlight.js"></script>
+<script>
+    // More info about initialization & config:
+    // - https://revealjs.com/initialization/
+    // - https://revealjs.com/config/
+    Reveal.initialize({
+        hash: true,
+
+        // Learn about plugins: https://revealjs.com/plugins/
+        plugins: [RevealMarkdown, RevealHighlight],
+        markdown: {
+            smartypants: true
+        }
+    });
+</script>
+
+<aside class="miage_aside_logo"></aside>
+
+</body>
+</html>
