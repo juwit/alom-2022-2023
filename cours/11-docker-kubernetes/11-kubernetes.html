@@ -30,6 +30,306 @@
 
     <div class="slides">
 
+        <section data-markdown>
+            <textarea data-template>
+                # ☸️ Kubernetes
+                orchestrator concepts
+                ---
+                ## What is a container?
+                It's all about isolation
+
+                * process
+                * cpu & memory
+                * users
+                * network
+                * storage (filesystem)
+                * devices
+
+                ---
+                ## What is a container?
+                Isolation enables cohabitation
+                ![](images/kubernetes/01-isolation.png)
+
+                ---
+                ## Docker - Write Once, Run anywhere ☕
+                ![](images/kubernetes/02-write-once-run-anywhere.png)
+
+                ---
+                ## How to run containers in a cluster environment ?
+                ![](images/kubernetes/03-hosts.png)
+
+                ---
+                ## Problems Docker doesn't solve
+
+                * how to manage multiple updates, tons of containers, on multiple hosts
+                * how to choose which server will host which container
+                * what if a host is down
+                * how to scale (up/down)
+                * how to manage container lifecycle (restarts)
+
+                ---
+                ## container orchestration
+
+                ![](images/kubernetes/04-orchestration.png)
+                
+                ---
+                ## What an orchestrator does
+                
+                * Manages containers lifecycle
+                * Ensures high availability
+                * Load balances traffic
+                * Provides service discovery
+                * Provides network as an overlay between hosts
+                * Provides grouping of resources
+                * Stores configuration
+                * Stores secrets
+                * Scales up/down containers
+                * Provides storage (persistent & distributed)
+                * Implements Role-based access control
+
+                ---
+                ## Introducing Kubernetes
+                * Open-Source project
+                * Initiated by Google in 2014
+                * Based on 15 years of experience by Google (Borg project)
+                * Cloud Native Computing Foundation (CNCF graduated project)
+                * Two nicknames:
+                  * kube
+                  * k8s
+
+                https://github.com/kubernetes
+                https://kubernetes.io
+
+                ![](images/kubernetes/kubernetes-pronounciation.png)
+                ---
+                ## Kubernetes architecture
+                ![](images/kubernetes/06-kubernetes-architecture.png)
+
+                ---
+                # Kubernetes main concepts
+            </textarea>
+        </section>
+        <section>
+            <h2>Pod</h2>
+            <p>Pods are the smallest deployable units of computing that you can create and manage in Kubernetes.</p>
+            <div style="width: 90%">
+            <img src="images/kubernetes/07-pod.png" style="width: 50%; float: right;"/>
+            <pre style="width: 50%; float: left;"><code data-line-numbers data-trim>
+apiVersion: v1
+kind: Pod
+metadata:
+  name: basic-pod
+spec:
+  containers:
+  - name: webserver
+    image: nginx
+                    </pre></code></div>
+        </section>
+        <section data-markdown>
+            <textarea data-template>
+                ## Pod
+
+                * a Pod is a group of one or more containers
+                * containers in a Pod share storage and network resources
+                * they can communication through loopback (localhost)
+                * a Pod has an IP address in the cluster
+                * resources of a Pod are co-located
+                * generally, Pods contains only one container
+            </textarea>
+        </section>
+        <section>
+            <h2>deployments & replicasets</h2>
+            <p>
+                Deployments manages a replicated application on your cluster.
+                ReplicaSet ensures that a specified number of Pod replicas are running at one time.
+            </p>
+            <div style="width: 90%">
+            <img src="images/kubernetes/08-deployment.png" style="width: 50%; float: right;"/>
+            <pre style="width: 50%; float: left;"><code data-line-numbers data-trim>
+                apiVersion: apps/v1
+                kind: Deployment
+                metadata:
+                  name: basic-deployment
+                spec:
+                  replicas: 2
+                  selector:
+                    matchLabels:
+                      app: burger
+                  template:
+                    metadata:
+                      labels:
+                        app: burger
+                    spec:
+                      containers:
+                        - name: webserver
+                          image: nginx
+                    </pre></code></div>
+        </section>
+        <section data-markdown>
+            <textarea data-template>
+                ## deployments & replicasets
+
+                * a Deployment helps to define & update a ReplicaSet
+                * a ReplicaSet holds the definition of a Pod, which should be replicated to one or multiple instances (replicas)
+                * provides guarantee of the specified number of identical running Pods
+                * Pods are scheduled by the controllers on any available node
+                * the controller ensures that the correct number of Pods are always running
+                * Deployment enables the updates of Pods using rolling updates            
+            </textarea>
+        </section>
+        <section>
+            <h2>daemonset</h2>
+            <p>
+                DaemonSet ensures that all (or some) Nodes run a copy of a Pod.
+            </p>
+            <div style="width: 90%">
+            <img src="images/kubernetes/09-daemonset.png" style="width: 50%; float: right;"/>
+            <pre style="width: 50%; float: left;"><code data-line-numbers data-trim>
+                apiVersion: apps/v1
+                kind: DaemonSet
+                metadata:
+                  name: basic-daemonset
+                spec:
+                  selector:
+                    matchLabels:
+                      app: pizza
+                  template:
+                    metadata:
+                      labels:
+                        app: pizza
+                    spec:
+                      containers:
+                        - name: webserver
+                          image: nginx
+                    </pre></code></div>
+        </section>
+        <section data-markdown>
+            <textarea data-template>
+                ## workloads : daemonset
+
+                typical use cases:
+                * logs management
+                * monitoring
+                * cluster storage
+
+            </textarea>
+        </section>
+        <section>
+            <h2>jobs/cronjobs</h2>
+            <p>
+                Job creates one or more Pods and ensures that a specified number of them successfully terminate.
+                Cronjobs creates Jobs on a repeating schedule.
+            </p>
+            <div style="width: 90%">
+            <img src="images/kubernetes/10-cronjob.png" style="width: 50%; float: right;"/>
+            <pre style="width: 50%; float: left;"><code data-line-numbers data-trim>
+                apiVersion: batch/v1
+                kind: Job
+                metadata:
+                  name: bretzel
+                spec:
+                  template:
+                    spec:
+                      containers:
+                        - name: date
+                          image: alpine
+                          command: ["sh", "-c", "date"]
+                      restartPolicy: Never
+                    </pre></code></div>
+        </section>
+        <section data-markdown>
+            <textarea data-template>
+                ## workloads : jobs/cronjobs
+
+                * a Job runs a Pod until completion
+                * if the Pod is failed, killed or deleted, the Job will be restarted
+                * use case: one-time running batch
+                * a Cronjob uses crontab syntax to define schedules
+                * use case: batches !
+            </textarea>
+        </section>
+        <section>
+            <h2>networking: services</h2>
+            <p>
+                A Service is an abstract way to expose an application running on a set of Pods as a network service.
+            </p>
+            <div style="width: 90%">
+            <img src="images/kubernetes/11-services.png" style="width: 50%; float: right;"/>
+            <pre style="width: 50%; float: left;"><code data-line-numbers data-trim>
+                apiVersion: v1
+                kind: Service
+                metadata:
+                  name: burger-service
+                spec:
+                  selector:
+                    app: burger
+                  ports:
+                  - protocol: TCP
+                    port: 80
+                    targetPort: 8080
+                    </pre></code></div>
+        </section>
+        <section data-markdown>
+            <textarea data-template>
+                ## networking: services
+
+                * a Service is an internal IP and single DNS name for a set of Pods
+                * It provides load-balancing between Pods
+                * The set of Pods is targeted using selectors (a set of labels)
+                * This mecanism replaces service-discovery & VIPs
+                * A Service listens on a port, and redirects traffic to a port in the Pods
+                * A Service is visible inside the cluster
+            </textarea>
+        </section>
+        <section>
+            <h2>networking: ingress</h2>
+            <p>
+                Ingress exposes HTTP and HTTPS routes from outside the cluster to Services within the cluster.
+            </p>
+            <div style="width: 90%">
+            <img src="images/kubernetes/12-ingress.png" style="width: 50%; float: right;"/>
+            <pre style="width: 50%; float: left;"><code data-line-numbers data-trim>
+                apiVersion: networking.k8s.io/v1
+                kind: Ingress
+                metadata:
+                  name: ingress-burger
+                  annotations:
+                    kubernetes.io/ingress.class: traefik
+                spec:
+                  rules:
+                  - host: burger.fr.172.16.134.57.nip.io
+                    http:
+                      paths:
+                      - path: /
+                        pathType: Prefix
+                        backend:
+                          service:
+                            name: burger-service
+                            port: 
+                              number: 80
+                    </pre></code></div>
+        </section>
+        <section data-markdown>
+            <textarea data-template>
+                ## networking: ingress
+
+                * Ingress gives Services externally-reachable URLs
+                * It can provide SSL/TLS termination
+                * Name-based virtual hosting
+                * Runs on Layer 7 (HTTP)
+                * Uses the "Host" HTTP Header to route requests to the right Service
+                * An Ingress Controllers manages Ingress, such a Traefik or Nginx
+
+                ---
+                ### Thank you!
+
+                ---
+                ### Questions?
+                ![](images/questions.png)
+
+            </textarea>
+        </section>
+
     </div>
 
 </div>
