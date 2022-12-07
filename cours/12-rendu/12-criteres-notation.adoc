@@ -80,7 +80,7 @@ Vous pouvez ajouter un fichier `.gitignore` à la racine de vos projets pour cel
 | 1
 
 | game-ui
-| inscription au jeu, changement de mot de passe, ajout/suppression de pokemons à mon équipe
+| inscription au jeu, changement de mot de passe
 | 2
 
 | configuration cloud
@@ -98,7 +98,7 @@ Vous pouvez ajouter un fichier `.gitignore` à la racine de vos projets pour cel
 | 1
 
 | shop-api
-| achat d'objets et impacts sur le trainer
+| achat d'objets et impacts sur le trainer (pokeballs)
 | 3
 
 | battle-api / trainer-api
