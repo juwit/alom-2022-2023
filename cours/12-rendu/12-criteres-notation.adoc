@@ -26,7 +26,7 @@ Le rendu se fait via vos repositories Github.
 
 Vous devez push votre code directement sur les repositories qui vous sont affectés.
 
-Les repositories seront clôturés le 30 décembre à 20h. Vous avez donc encore un peu de temps pour finaliser votre projet.
+Les repositories seront clôturés le 6 janvier à 20h. Vous avez donc encore un peu de temps pour finaliser votre projet.
 
 Le projet est bien constitué de 5 parties :
 
